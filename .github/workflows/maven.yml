@@ -33,6 +33,9 @@ jobs:
         run: mvn --batch-mode clean package -DskipTests
 
       - name: Test the project
+        run: mvn --batch-mode test
+
+      - name: Verify the project
         run: mvn --batch-mode --update-snapshots verify
 
       - name: Upload built artifact
