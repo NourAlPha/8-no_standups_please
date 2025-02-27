@@ -1,9 +1,14 @@
 name: Docker Build & Push
 
 on:
-  workflow_run:
-    workflows: [Java CI with Maven]
-    types: [requested]
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      artifact-name:
+        required: true
+        type: string
 #
 jobs:
   docker-build-and-push:

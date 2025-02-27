@@ -2,7 +2,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "dev", "NourAlPha/dummy" ]
+    branches: [ "main", "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
 
@@ -57,3 +57,11 @@ jobs:
         with:
           name: packaged-artifact
           path: target/*.jar
+
+  deploy:
+    needs: build-artifact
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Deploy only on main push
+    uses: ./.github/workflows/cd.yml  # Calls the reusable CD workflow
+    with:
+      branch: "main"
+      artifact-name: "packaged-artifact"
