@@ -3,8 +3,7 @@ name: Docker Build & Push
 on:
   workflow_run:
     workflows: [Java CI with Maven]
-    types:
-      - completed
+    types: [completed]
 
 jobs:
   docker-build-and-push:
