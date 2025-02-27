@@ -2,10 +2,9 @@ name: Docker Build & Push
 
 on:
   workflow_run:
-    workflows: [ "Java CI with Maven" ]  # Matches the name in ci.yml
-    types:
-      - completed  # Runs when ci.yml finishes
-    branches: [ "main" ]  # Only trigger on main
+    workflows: [Java CI with Maven]  # Matches the name in ci.yml
+    types: [completed]  # Runs when ci.yml finishes
+    branches: [main]  # Only trigger on main
 
 jobs:
   docker-build-and-push:
