@@ -20,7 +20,7 @@ jobs:
       - name: Download built artifact
         uses: actions/download-artifact@v4
         with:
-          name: packaged-artifact
+          name: ${{ inputs.artifact-name }}
           path: target/
 
       - name: Log in to Docker Hub

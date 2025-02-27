@@ -60,7 +60,8 @@ jobs:
 
   deploy:
     needs: build-artifact
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Deploy only on main push
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
     uses: ./.github/workflows/cd.yml  # Calls the reusable CD workflow
     with:
       branch: "main"
