@@ -3,7 +3,6 @@ name: Docker Build & Push
 on:
   workflow_run:
     workflows: [ "Java CI with Maven" ]
-    branches: [ "main" ]
     types:
       - completed
 
