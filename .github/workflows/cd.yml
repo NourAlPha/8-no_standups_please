@@ -3,13 +3,11 @@ name: Docker Build & Push
 on:
   workflow_run:
     workflows: [Java CI with Maven]
-    types: [completed]
 
 jobs:
   docker-build-and-push:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
