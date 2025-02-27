@@ -66,3 +66,6 @@ jobs:
     with:
       branch: "main"
       artifact-name: "packaged-artifact"
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}

@@ -9,7 +9,12 @@ on:
       artifact-name:
         required: true
         type: string
-#
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
+
 jobs:
   docker-build-and-push:
     name: Build & Push Docker Image
