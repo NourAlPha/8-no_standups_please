@@ -1,0 +1,35 @@
+name: Docker Build & Push
+
+on:
+  workflow_run:
+    workflows: [ "Java CI with Maven" ]  # Matches the name in ci.yml
+    types:
+      - completed  # Runs when ci.yml finishes
+    branches: [ "main" ]  # Only trigger on main
+
+jobs:
+  docker-build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if CI succeeds
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download built artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: packaged-artifact
+          path: target/
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:${{ github.sha }}
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-java-app:${{ github.sha }}
