@@ -57,3 +57,14 @@ jobs:
         with:
           name: packaged-artifact
           path: target/*.jar
+
+  deploy:
+    needs: build-artifact
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/cd.yml  # Calls the reusable CD workflow
+    with:
+      branch: "main"
+      artifact-name: "packaged-artifact"
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
