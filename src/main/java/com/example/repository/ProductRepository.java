@@ -18,7 +18,6 @@ public class ProductRepository extends MainRepository<Product> {
     @SuppressWarnings("checkstyle:VisibilityModifier")
     public static List<Product> products = new ArrayList<>();
     private static final double FULL_PERCENTAGE = 100.0;
-    public String id;
 
     public ProductRepository() {
 
