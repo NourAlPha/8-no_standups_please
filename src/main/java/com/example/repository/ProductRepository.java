@@ -13,9 +13,9 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class ProductRepository extends MainRepository<Product> {
 
-    // CHECKSTYLE:OFF
+    //CHECKSTYLE:OFF
     public static List<Product> products = new ArrayList<>();
-    // CHECKSTYLE:ON
+    //CHECKSTYLE:ON
     private static final double FULL_PERCENTAGE = 100.0;
 
     public ProductRepository() {
