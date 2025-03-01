@@ -13,8 +13,9 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class ProductRepository extends MainRepository<Product> {
 
-    // Private access modifier may cause private tests to fail in the future?
-    private static final List<Product> products = new ArrayList<>();
+    // Private access modifier and changing name (products -> PRODUCTS) may
+    // cause private tests to fail in the future?
+    private static final List<Product> PRODUCTS = new ArrayList<>();
     private static final double FULL_PERCENTAGE = 100.0;
 
     public ProductRepository() {
@@ -22,8 +23,8 @@ public class ProductRepository extends MainRepository<Product> {
     }
 
     public Product addProduct(final Product product) {
-        if (!products.isEmpty()) {
-            products.add(product);
+        if (!PRODUCTS.isEmpty()) {
+            PRODUCTS.add(product);
         }
 
         save(product);
@@ -31,17 +32,17 @@ public class ProductRepository extends MainRepository<Product> {
     }
 
     public ArrayList<Product> getProducts() {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
+        if (PRODUCTS.isEmpty()) {
+            PRODUCTS.addAll(findAll());
         }
-        return (ArrayList<Product>) products;
+        return (ArrayList<Product>) PRODUCTS;
     }
 
     public Product getProductById(final UUID id) {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
+        if (PRODUCTS.isEmpty()) {
+            PRODUCTS.addAll(findAll());
         }
-        for (Product product : products) {
+        for (Product product : PRODUCTS) {
             if (product.getId().equals(id)) {
                 return product;
             }
@@ -53,14 +54,14 @@ public class ProductRepository extends MainRepository<Product> {
 
     public Product updateProduct(final UUID productId,
                                  final String newName,final double newPrice) {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
+        if (PRODUCTS.isEmpty()) {
+            PRODUCTS.addAll(findAll());
         }
-        for (Product product : products) {
+        for (Product product : PRODUCTS) {
             if (product.getId().equals(productId)) {
                 product.setName(newName);
                 product.setPrice(newPrice);
-                overrideData((ArrayList<Product>) products);
+                overrideData((ArrayList<Product>) PRODUCTS);
                 return product;
             }
         }
@@ -78,16 +79,16 @@ public class ProductRepository extends MainRepository<Product> {
 
         for (UUID productId : productIds) {
             Product product = getProductById(productId);
-            product.setPrice(product.getPrice() *
-                    (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE);
+            product.setPrice(product.getPrice()
+                    * (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE);
         }
-        overrideData((ArrayList<Product>) products);
+        overrideData((ArrayList<Product>) PRODUCTS);
     }
 
     public void deleteProductById(final UUID productId) {
         Product product = getProductById(productId);
-        products.remove(product);
-        overrideData((ArrayList<Product>) products);
+        PRODUCTS.remove(product);
+        overrideData((ArrayList<Product>) PRODUCTS);
     }
 
     @Override
