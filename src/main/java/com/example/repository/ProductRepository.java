@@ -13,13 +13,15 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class ProductRepository extends MainRepository<Product> {
 
-    public static List<Product> products = new ArrayList<>();
+    // Private access modifier may cause private tests to fail in the future?
+    private static final List<Product> products = new ArrayList<>();
+    private static final double FULL_PERCENTAGE = 100.0;
 
     public ProductRepository() {
 
     }
 
-    public Product addProduct(Product product) {
+    public Product addProduct(final Product product) {
         if (!products.isEmpty()) {
             products.add(product);
         }
@@ -35,7 +37,7 @@ public class ProductRepository extends MainRepository<Product> {
         return (ArrayList<Product>) products;
     }
 
-    public Product getProductById(UUID id) {
+    public Product getProductById(final UUID id) {
         if (products.isEmpty()) {
             products.addAll(findAll());
         }
@@ -45,10 +47,12 @@ public class ProductRepository extends MainRepository<Product> {
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Product with id %s not found", id));
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                String.format("Product with id %s not found", id));
     }
 
-    public Product updateProduct(UUID productId, String newName, double newPrice) {
+    public Product updateProduct(final UUID productId,
+                                 final String newName,final double newPrice) {
         if (products.isEmpty()) {
             products.addAll(findAll());
         }
@@ -60,24 +64,27 @@ public class ProductRepository extends MainRepository<Product> {
                 return product;
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Product with id %s not found", productId));
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                String.format("Product with id %s not found", productId));
     }
 
     // Discount here should be integer as per the description,
     // maybe it was a typo in the method signature?
-    public void applyDiscount(double discount, ArrayList<UUID> productIds) {
+    public void applyDiscount(final double discount,
+                              final ArrayList<UUID> productIds) {
         if (productIds.isEmpty()) {
             return;
         }
 
         for (UUID productId : productIds) {
             Product product = getProductById(productId);
-            product.setPrice(product.getPrice() * (100.0 - discount) / 100.0);
+            product.setPrice(product.getPrice() *
+                    (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE);
         }
         overrideData((ArrayList<Product>) products);
     }
 
-    public void deleteProductById(UUID productId) {
+    public void deleteProductById(final UUID productId) {
         Product product = getProductById(productId);
         products.remove(product);
         overrideData((ArrayList<Product>) products);
