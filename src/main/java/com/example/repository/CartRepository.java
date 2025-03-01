@@ -67,7 +67,8 @@ public class CartRepository extends MainRepository<Cart> {
         save(cart);
     }
 
-    public void deleteProductFromCart(final UUID cartId, final Product product) {
+    public void deleteProductFromCart(final UUID cartId,
+                                      final Product product) {
         initializeCarts();
         Cart cart = getCartById(cartId);
         cart.removeProduct(product);
