@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import com.example.model.Product;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +18,8 @@ public class ProductRepository extends MainRepository<Product> {
     // to allow access for potential private test cases.
     @SuppressWarnings("checkstyle:VisibilityModifier")
     public static List<Product> products = new ArrayList<>();
+    @Value("${products.path}")
+    private String productsPath;
     private static final double FULL_PERCENTAGE = 100.0;
 
     public ProductRepository() {
@@ -33,16 +36,12 @@ public class ProductRepository extends MainRepository<Product> {
     }
 
     public ArrayList<Product> getProducts() {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
-        }
+        initializeProducts();
         return (ArrayList<Product>) products;
     }
 
     public Product getProductById(final UUID id) {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
-        }
+        initializeProducts();
         for (Product product : products) {
             if (product.getId().equals(id)) {
                 return product;
@@ -55,9 +54,7 @@ public class ProductRepository extends MainRepository<Product> {
 
     public Product updateProduct(final UUID productId,
                                  final String newName, final double newPrice) {
-        if (products.isEmpty()) {
-            products.addAll(findAll());
-        }
+        initializeProducts();
         for (Product product : products) {
             if (product.getId().equals(productId)) {
                 product.setName(newName);
@@ -80,8 +77,9 @@ public class ProductRepository extends MainRepository<Product> {
 
         for (UUID productId : productIds) {
             Product product = getProductById(productId);
-            product.setPrice(product.getPrice()
-                    * (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE);
+            double discountFactor =
+                    (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE;
+            product.setPrice(product.getPrice() * discountFactor);
         }
         overrideData((ArrayList<Product>) products);
     }
@@ -94,11 +92,17 @@ public class ProductRepository extends MainRepository<Product> {
 
     @Override
     protected String getDataPath() {
-        return "src/main/java/com/example/data/products.json";
+        return productsPath;
     }
 
     @Override
     protected Class<Product[]> getArrayType() {
         return Product[].class;
+    }
+
+    private void initializeProducts() {
+        if (products.isEmpty()) {
+            products.addAll(findAll());
+        }
     }
 }
