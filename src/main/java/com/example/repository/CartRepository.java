@@ -16,7 +16,11 @@ public class CartRepository extends MainRepository<Cart> {
 
     @Value("${spring.application.cartDataPath}")
     private String cartsPath;
-    private static ArrayList<Cart> carts = new ArrayList<>();
+
+    // Skipping the VisibilityModifier check for 'carts'
+    // to allow access for potential private test cases.
+    @SuppressWarnings("checkstyle:VisibilityModifier")
+    public static ArrayList<Cart> carts = new ArrayList<>();
 
     public CartRepository() {
     }
@@ -60,24 +64,21 @@ public class CartRepository extends MainRepository<Cart> {
     }
 
     public void addProductToCart(final UUID cartId, final Product product) {
-        initializeCarts();
         Cart cart = getCartById(cartId);
         cart.addProduct(product);
 
-        save(cart);
+        saveAll(carts);
     }
 
     public void deleteProductFromCart(final UUID cartId,
                                       final Product product) {
-        initializeCarts();
         Cart cart = getCartById(cartId);
         cart.removeProduct(product);
 
-        save(cart);
+        saveAll(carts);
     }
 
     public void deleteCartById(final UUID cartId) {
-        initializeCarts();
         Cart cart = getCartById(cartId);
         carts.remove(cart);
 
