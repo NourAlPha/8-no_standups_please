@@ -53,7 +53,7 @@ public class ProductRepository extends MainRepository<Product> {
     }
 
     public Product updateProduct(final UUID productId,
-                                 final String newName,final double newPrice) {
+                                 final String newName, final double newPrice) {
         if (PRODUCTS.isEmpty()) {
             PRODUCTS.addAll(findAll());
         }
