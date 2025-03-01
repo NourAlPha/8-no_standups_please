@@ -13,7 +13,7 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class ProductRepository extends MainRepository<Product> {
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
+    @SuppressWarnings("checkstyle:NoWhitespaceAfter")
     public static List<Product> products = new ArrayList<>();
     private static final double FULL_PERCENTAGE = 100.0;
 
