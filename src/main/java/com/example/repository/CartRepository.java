@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.model.Cart;
 import com.example.model.Product;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,14 +14,15 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public class CartRepository extends MainRepository<Cart> {
 
+    @Value("${spring.application.cartDataPath}")
     private String cartsPath;
     private static ArrayList<Cart> carts = new ArrayList<>();
 
     public CartRepository() {
     }
 
-    public Cart addCart(Cart cart) {
-        if(!carts.isEmpty()){
+    public Cart addCart(final Cart cart) {
+        if (!carts.isEmpty()) {
             carts.add(cart);
         }
 
@@ -33,7 +35,7 @@ public class CartRepository extends MainRepository<Cart> {
         return carts;
     }
 
-    public Cart getCartById(UUID id) {
+    public Cart getCartById(final UUID id) {
         initializeCarts();
         for (Cart cart : carts) {
             if (cart.getId().equals(id)) {
@@ -45,7 +47,7 @@ public class CartRepository extends MainRepository<Cart> {
                 String.format("Cart with id %s not found", id));
     }
 
-    public Cart getCartByUserId(UUID userId) {
+    public Cart getCartByUserId(final UUID userId) {
         initializeCarts();
         for (Cart cart : carts) {
             if (cart.getUserId().equals(userId)) {
@@ -57,7 +59,7 @@ public class CartRepository extends MainRepository<Cart> {
                 String.format("Cart with userId %s not found", userId));
     }
 
-    public void addProductToCart(UUID cartId, Product product) {
+    public void addProductToCart(final UUID cartId, final Product product) {
         initializeCarts();
         Cart cart = getCartById(cartId);
         cart.addProduct(product);
@@ -65,7 +67,7 @@ public class CartRepository extends MainRepository<Cart> {
         save(cart);
     }
 
-    public void deleteProductFromCart(UUID cartId, Product product) {
+    public void deleteProductFromCart(final UUID cartId, final Product product) {
         initializeCarts();
         Cart cart = getCartById(cartId);
         cart.removeProduct(product);
@@ -73,14 +75,13 @@ public class CartRepository extends MainRepository<Cart> {
         save(cart);
     }
 
-    public void deleteCartById(UUID cartId) {
+    public void deleteCartById(final UUID cartId) {
         initializeCarts();
         Cart cart = getCartById(cartId);
         carts.remove(cart);
 
         saveAll(carts);
     }
-
 
     private void initializeCarts() {
         if (carts.isEmpty()) {
