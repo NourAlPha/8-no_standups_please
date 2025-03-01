@@ -18,7 +18,7 @@ public class ProductRepository extends MainRepository<Product> {
     // to allow access for potential private test cases.
     @SuppressWarnings("checkstyle:VisibilityModifier")
     public static List<Product> products = new ArrayList<>();
-    @Value("${products.path}")
+    @Value("${spring.application.productDataPath}")
     private String productsPath;
     private static final double FULL_PERCENTAGE = 100.0;
 
