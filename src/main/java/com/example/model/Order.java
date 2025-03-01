@@ -13,12 +13,11 @@ public class Order {
     private double totalPrice;
     private List<Product> products = new ArrayList<>();
 
-
     public Order() {
         this.id = UUID.randomUUID();
     }
 
-    public Order(UUID userId, double totalPrice) {
+    public Order(final UUID userId, final double totalPrice) {
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.totalPrice = totalPrice;
@@ -28,7 +27,7 @@ public class Order {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -36,7 +35,7 @@ public class Order {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(final UUID userId) {
         this.userId = userId;
     }
 
@@ -44,7 +43,7 @@ public class Order {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(final double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -52,17 +51,15 @@ public class Order {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(final List<Product> products) {
         this.products = products;
     }
 
-
-    public void addProduct(Product product) {
+    public void addProduct(final Product product) {
         this.products.add(product);
     }
 
-
-    public void removeProduct(Product product) {
+    public void removeProduct(final Product product) {
         this.products.remove(product);
     }
 }
