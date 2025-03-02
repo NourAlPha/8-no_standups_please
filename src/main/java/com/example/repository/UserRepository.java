@@ -72,7 +72,6 @@ public class UserRepository extends MainRepository<User> {
     }
 
     public void deleteUserById(final UUID userId) {
-        intializeUsers();
         User user = getUserById(userId);
         users.remove(user);
         overrideData(users);
