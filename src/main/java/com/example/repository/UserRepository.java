@@ -37,8 +37,8 @@ public class UserRepository extends MainRepository<User> {
                 return user;
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not " +
-                "found");
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "User not " + "found");
     }
 
     public User addUser(final User user) {
