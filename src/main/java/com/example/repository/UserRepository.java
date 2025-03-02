@@ -1,67 +1,49 @@
 package com.example.repository;
+
 import com.example.model.Order;
 import com.example.model.User;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class UserRepository {
+@SuppressWarnings("rawtypes")
+public class UserRepository extends MainRepository<User> {
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    public static ArrayList<User> users;
+    @Value("${spring.application.userDataPath}")
+    private String usersPath;
 
-    public void findAll() {
-        try {
-            users = new ArrayList<>();
-            ObjectMapper objectMapper = new ObjectMapper();
-            ClassPathResource resource = new ClassPathResource("users.json");
-            InputStream inputStream = resource.getInputStream();
-            users = objectMapper.readValue(inputStream,
-                    new TypeReference<>() {
-                    });
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "File not found: " + e.getMessage());
-        }
+    private static ArrayList<User> users;
+
+    public UserRepository() {
+
     }
 
     public ArrayList<User> getUsers() {
-        if (users == null) {
-            findAll();
-        }
+        intializeUsers();
         return users;
     }
 
     public User getUserById(final UUID userId) {
-        if (users == null) {
-            findAll();
-        }
+        intializeUsers();
         for (User user : users) {
             if (user.getId().equals(userId)) {
                 return user;
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "User not found");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
     }
 
     public User addUser(final User user) {
-        if (users == null) {
-            findAll();
-        }
+        intializeUsers();
         users.add(user);
-        writeUsers(users);
+        save(user);
         return user;
     }
 
@@ -73,13 +55,7 @@ public class UserRepository {
     public void addOrderToUser(final UUID userId, final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getId().equals(userId)) {
-                users.set(i, user);
-                break;
-            }
-        }
-        writeUsers(users);
+        overrideData(users);
     }
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
@@ -87,42 +63,33 @@ public class UserRepository {
         List<Order> orders = user.getOrders();
         for (Order order : orders) {
             if (order.getId().equals(orderId)) {
-                orders.remove(order);
+                user.removeOrder(order);
                 break;
             }
         }
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getId().equals(userId)) {
-                users.set(i, user);
-                break;
-            }
-        }
-        writeUsers(users);
+        overrideData(users);
     }
 
     public void deleteUserById(final UUID userId) {
-        if (users == null) {
-            findAll();
-        }
-        for (User user : users) {
-            if (user.getId().equals(userId)) {
-                users.remove(user);
-                writeUsers(users);
-                return;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "User not found");
+        intializeUsers();
+        User user = getUserById(userId);
+        users.remove(user);
+        overrideData(users);
     }
 
-    public void writeUsers(final ArrayList<User> users) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ClassPathResource resource = new ClassPathResource("users.json");
-            objectMapper.writeValue(resource.getFile(), users);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "File not found: " + e.getMessage());
+    @Override
+    protected String getDataPath() {
+        return usersPath;
+    }
+
+    @Override
+    protected Class<User[]> getArrayType() {
+        return User[].class;
+    }
+
+    private void intializeUsers() {
+        if (users == null) {
+            users = findAll();
         }
     }
 }
