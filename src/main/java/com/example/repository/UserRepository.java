@@ -19,7 +19,7 @@ public class UserRepository {
 
     public static ArrayList<User> users;
 
-    public void findAll(){
+    public void findAll() {
         try {
             users = new ArrayList<>();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -35,14 +35,14 @@ public class UserRepository {
     }
 
     public ArrayList<User> getUsers() {
-        if(users == null){
+        if (users == null) {
             findAll();
         }
         return users;
     }
 
-    public User getUserById(UUID userId){
-        if(users == null){
+    public User getUserById(UUID userId) {
+        if (users == null) {
             findAll();
         }
         for (User user : users) {
@@ -54,8 +54,8 @@ public class UserRepository {
                 "User not found");
     }
 
-    public User addUser(User user){
-        if(users == null){
+    public User addUser(User user) {
+        if (users == null) {
             findAll();
         }
         users.add(user);
@@ -63,12 +63,12 @@ public class UserRepository {
         return user;
     }
 
-    public List<Order> getOrdersByUserId(UUID userId){
+    public List<Order> getOrdersByUserId(UUID userId) {
         User user = getUserById(userId);
         return user.getOrders();
     }
 
-    public void addOrderToUser(UUID userId, Order order){
+    public void addOrderToUser(UUID userId, Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
         for (int i = 0; i < users.size(); i++) {
@@ -80,7 +80,7 @@ public class UserRepository {
         writeUsers(users);
     }
 
-    public void removeOrderFromUser(UUID userId, UUID orderId){
+    public void removeOrderFromUser(UUID userId, UUID orderId) {
         User user = getUserById(userId);
         List<Order> orders = user.getOrders();
         for (Order order : orders) {
@@ -98,8 +98,8 @@ public class UserRepository {
         writeUsers(users);
     }
 
-    public void deleteUserById(UUID userId){
-        if(users == null){
+    public void deleteUserById(UUID userId) {
+        if (users == null) {
             findAll();
         }
         for (User user : users) {
@@ -113,7 +113,7 @@ public class UserRepository {
                 "User not found");
     }
 
-    public void writeUsers(ArrayList<User> users){
+    public void writeUsers(ArrayList<User> users) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ClassPathResource resource = new ClassPathResource("users.json");
