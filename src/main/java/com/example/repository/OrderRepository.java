@@ -1,7 +1,6 @@
 package com.example.repository;
 
 import com.example.model.Order;
-import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -21,21 +20,20 @@ public class OrderRepository extends MainRepository<Order> {
     public static ArrayList<Order> orders = new ArrayList<>();
 
 
-    public void addOrder(Order order){
+    public void addOrder(final Order order) {
         orders.add(order);
         save(order);
     }
 
-    public ArrayList<Order> getOrders(){
+    public ArrayList<Order> getOrders() {
         initializeOrders();
         return orders;
     }
 
-    public Order getOrderById(UUID orderId){
+    public Order getOrderById(final UUID orderId) {
         initializeOrders();
         for (Order order : orders) {
-            if (order.getId().equals(orderId)) {
-
+            if (order.getId().equals(orderId)){
                 return order;
             }
         }
@@ -43,7 +41,7 @@ public class OrderRepository extends MainRepository<Order> {
                 String.format("Order with id %s not found", orderId));
     }
 
-    public void deleteOrderById(UUID orderId){
+    public void deleteOrderById(final UUID orderId) {
         Order order = getOrderById(orderId);
         orders.remove(order);
         overrideData(orders);
