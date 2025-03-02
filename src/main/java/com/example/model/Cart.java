@@ -8,7 +8,7 @@ import java.util.UUID;
 
 
 @Component
-public class Cart {
+public class Cart implements Identifiable {
     private UUID id;
     private UUID userId;
     private List<Product> products = new ArrayList<>();

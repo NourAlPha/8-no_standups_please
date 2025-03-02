@@ -4,9 +4,7 @@ import com.example.model.Order;
 import com.example.model.User;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,38 +12,25 @@ import java.util.UUID;
 
 @Repository
 @SuppressWarnings("rawtypes")
-public class UserRepository extends MainRepository<User> {
+public class UserRepository extends GenericRepository<User> {
 
     @Value("${spring.application.userDataPath}")
     private String usersPath;
-
-    private static ArrayList<User> users;
 
     public UserRepository() {
 
     }
 
     public ArrayList<User> getUsers() {
-        intializeUsers();
-        return users;
+        return getObjects();
     }
 
     public User getUserById(final UUID userId) {
-        intializeUsers();
-        for (User user : users) {
-            if (user.getId().equals(userId)) {
-                return user;
-            }
-        }
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "User not " + "found");
+        return getObjectById(userId);
     }
 
     public User addUser(final User user) {
-        intializeUsers();
-        users.add(user);
-        save(user);
-        return user;
+        return addObject(user);
     }
 
     public List<Order> getOrdersByUserId(final UUID userId) {
@@ -56,7 +41,7 @@ public class UserRepository extends MainRepository<User> {
     public void addOrderToUser(final UUID userId, final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
-        overrideData(users);
+        overrideData(getUsers());
     }
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
@@ -68,13 +53,11 @@ public class UserRepository extends MainRepository<User> {
                 break;
             }
         }
-        overrideData(users);
+        overrideData(getUsers());
     }
 
     public void deleteUserById(final UUID userId) {
-        User user = getUserById(userId);
-        users.remove(user);
-        overrideData(users);
+        deleteObjectById(userId);
     }
 
     @Override
@@ -85,11 +68,5 @@ public class UserRepository extends MainRepository<User> {
     @Override
     protected Class<User[]> getArrayType() {
         return User[].class;
-    }
-
-    private void intializeUsers() {
-        if (users == null) {
-            users = findAll();
-        }
     }
 }

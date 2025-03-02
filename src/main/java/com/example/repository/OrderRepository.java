@@ -2,49 +2,32 @@ package com.example.repository;
 
 import com.example.model.Order;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 @Repository
 @SuppressWarnings("rawtypes")
-public class OrderRepository extends MainRepository<Order> {
+public class OrderRepository extends GenericRepository<Order> {
+
     @Value("${spring.application.orderDataPath}")
     private String ordersPath;
 
-
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    public static ArrayList<Order> orders = new ArrayList<>();
-
-
     public void addOrder(final Order order) {
-        orders.add(order);
-        save(order);
+        addObject(order);
     }
 
     public ArrayList<Order> getOrders() {
-        initializeOrders();
-        return orders;
+        return getObjects();
     }
 
     public Order getOrderById(final UUID orderId) {
-        initializeOrders();
-        for (Order order : orders) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                String.format("Order with id %s not found", orderId));
+        return getObjectById(orderId);
     }
 
     public void deleteOrderById(final UUID orderId) {
-        Order order = getOrderById(orderId);
-        orders.remove(order);
-        overrideData(orders);
+        deleteObjectById(orderId);
     }
 
     @Override
@@ -57,9 +40,4 @@ public class OrderRepository extends MainRepository<Order> {
         return Order[].class;
     }
 
-    private void initializeOrders() {
-        if (orders.isEmpty()) {
-            orders.addAll(findAll());
-        }
-    }
 }

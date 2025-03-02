@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class Order {
+public class Order implements Identifiable {
     private UUID id;
     private UUID userId;
     private double totalPrice;

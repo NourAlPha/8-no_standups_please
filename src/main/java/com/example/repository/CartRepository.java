@@ -12,47 +12,28 @@ import java.util.UUID;
 
 @Repository
 @SuppressWarnings("rawtypes")
-public class CartRepository extends MainRepository<Cart> {
+public class CartRepository extends GenericRepository<Cart> {
 
     @Value("${spring.application.cartDataPath}")
     private String cartsPath;
-
-    // Skipping the VisibilityModifier check for 'carts'
-    // to allow access for potential private test cases.
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    public static ArrayList<Cart> carts = new ArrayList<>();
 
     public CartRepository() {
     }
 
     public Cart addCart(final Cart cart) {
-        if (!carts.isEmpty()) {
-            carts.add(cart);
-        }
-
-        save(cart);
-        return cart;
+        return addObject(cart);
     }
 
     public ArrayList<Cart> getCarts() {
-        initializeCarts();
-        return carts;
+        return getObjects();
     }
 
     public Cart getCartById(final UUID id) {
-        initializeCarts();
-        for (Cart cart : carts) {
-            if (cart.getId().equals(id)) {
-                return cart;
-            }
-        }
-
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                String.format("Cart with id %s not found", id));
+        return getObjectById(id);
     }
 
     public Cart getCartByUserId(final UUID userId) {
-        initializeCarts();
+        ArrayList<Cart> carts = getCarts();
         for (Cart cart : carts) {
             if (cart.getUserId().equals(userId)) {
                 return cart;
@@ -66,29 +47,18 @@ public class CartRepository extends MainRepository<Cart> {
     public void addProductToCart(final UUID cartId, final Product product) {
         Cart cart = getCartById(cartId);
         cart.addProduct(product);
-
-        saveAll(carts);
+        saveAll(getCarts());
     }
 
     public void deleteProductFromCart(final UUID cartId,
                                       final Product product) {
         Cart cart = getCartById(cartId);
         cart.removeProduct(product);
-
-        saveAll(carts);
+        saveAll(getCarts());
     }
 
     public void deleteCartById(final UUID cartId) {
-        Cart cart = getCartById(cartId);
-        carts.remove(cart);
-
-        saveAll(carts);
-    }
-
-    private void initializeCarts() {
-        if (carts.isEmpty()) {
-            carts = findAll();
-        }
+        deleteObjectById(cartId);
     }
 
     @Override

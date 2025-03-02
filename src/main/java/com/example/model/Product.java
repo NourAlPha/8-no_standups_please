@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class Product {
+public class Product implements Identifiable {
     private UUID id;
     private String name;
     private double price;
