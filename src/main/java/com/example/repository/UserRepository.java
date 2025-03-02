@@ -70,7 +70,7 @@ public class UserRepository {
         return user.getOrders();
     }
 
-    public void addOrderToUser(final UUID userId,final Order order) {
+    public void addOrderToUser(final UUID userId, final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
         for (int i = 0; i < users.size(); i++) {
@@ -82,7 +82,7 @@ public class UserRepository {
         writeUsers(users);
     }
 
-    public void removeOrderFromUser(final UUID userId,final UUID orderId) {
+    public void removeOrderFromUser(final UUID userId, final UUID orderId) {
         User user = getUserById(userId);
         List<Order> orders = user.getOrders();
         for (Order order : orders) {
