@@ -33,7 +33,7 @@ public class OrderRepository extends MainRepository<Order> {
     public Order getOrderById(final UUID orderId) {
         initializeOrders();
         for (Order order : orders) {
-            if (order.getId().equals(orderId)){
+            if (order.getId().equals(orderId)) {
                 return order;
             }
         }
