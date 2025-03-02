@@ -11,13 +11,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public class UserRepository {
 
-    public static ArrayList<User> users;
+    private static ArrayList<User> users;
 
     public void findAll() {
         try {
