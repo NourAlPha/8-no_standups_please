@@ -18,7 +18,8 @@ import java.util.UUID;
 @Repository
 public class UserRepository {
 
-    private static ArrayList<User> users;
+    @SuppressWarnings("checkstyle:VisibilityModifier")
+    public static ArrayList<User> users;
 
     public void findAll() {
         try {
@@ -42,7 +43,7 @@ public class UserRepository {
         return users;
     }
 
-    public User getUserById(UUID userId) {
+    public User getUserById(final UUID userId) {
         if (users == null) {
             findAll();
         }
@@ -55,7 +56,7 @@ public class UserRepository {
                 "User not found");
     }
 
-    public User addUser(User user) {
+    public User addUser(final User user) {
         if (users == null) {
             findAll();
         }
@@ -64,12 +65,12 @@ public class UserRepository {
         return user;
     }
 
-    public List<Order> getOrdersByUserId(UUID userId) {
+    public List<Order> getOrdersByUserId(final UUID userId) {
         User user = getUserById(userId);
         return user.getOrders();
     }
 
-    public void addOrderToUser(UUID userId, Order order) {
+    public void addOrderToUser(final UUID userId,final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
         for (int i = 0; i < users.size(); i++) {
@@ -81,7 +82,7 @@ public class UserRepository {
         writeUsers(users);
     }
 
-    public void removeOrderFromUser(UUID userId, UUID orderId) {
+    public void removeOrderFromUser(final UUID userId,final UUID orderId) {
         User user = getUserById(userId);
         List<Order> orders = user.getOrders();
         for (Order order : orders) {
@@ -99,7 +100,7 @@ public class UserRepository {
         writeUsers(users);
     }
 
-    public void deleteUserById(UUID userId) {
+    public void deleteUserById(final UUID userId) {
         if (users == null) {
             findAll();
         }
@@ -114,7 +115,7 @@ public class UserRepository {
                 "User not found");
     }
 
-    public void writeUsers(ArrayList<User> users) {
+    public void writeUsers(final ArrayList<User> users) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ClassPathResource resource = new ClassPathResource("users.json");
