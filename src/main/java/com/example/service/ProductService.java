@@ -1,6 +1,8 @@
 package com.example.service;
 
 import com.example.model.Product;
+import com.example.repository.CartRepository;
+import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,16 @@ import java.util.UUID;
 public class ProductService extends MainService<Product> {
 
     private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public ProductService(final ProductRepository productRepository) {
+    public ProductService(final ProductRepository productRepository,
+                          final CartRepository cartRepository,
+                          final OrderRepository orderRepository) {
         this.productRepository = productRepository;
+        this.cartRepository = cartRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Product addProduct(final Product product) {
@@ -33,15 +41,38 @@ public class ProductService extends MainService<Product> {
 
     public Product updateProduct(final UUID productId, final String newName,
                                  final double newPrice) {
-        return productRepository.updateProduct(productId, newName, newPrice);
+        Product updatedProduct = productRepository.updateProduct(productId,
+                newName, newPrice);
+
+        // Ensure the new price is reflected in all carts
+        cartRepository.updateCartPrices(productId, newPrice);
+
+        return updatedProduct;
     }
 
     public void applyDiscount(final double discount,
                               final ArrayList<UUID> productIds) {
-        productRepository.applyDiscount(discount, new ArrayList<>(productIds));
+        productRepository.applyDiscount(discount, productIds);
+
+        // After applying the discount, update all carts that contain
+        // these products
+        for (UUID productId : productIds) {
+            Product product = productRepository.getProductById(productId);
+            cartRepository.updateCartPrices(productId, product.getPrice());
+        }
     }
 
     public void deleteProductById(final UUID productId) {
+        //Check if the product exists in any active orders
+        //If it does, throw an exception
+        if (orderRepository.isProductInOrder(productId)) {
+            throw new IllegalStateException("Product is in active orders");
+        }
+
+        // Delete the product from all carts that contain
+        // this product
+        cartRepository.removeProductFromAllCarts(productId);
+
         productRepository.deleteProductById(productId);
     }
 }

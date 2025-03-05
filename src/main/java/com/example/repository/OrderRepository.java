@@ -1,6 +1,8 @@
 package com.example.repository;
 
+import com.example.model.Cart;
 import com.example.model.Order;
+import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +30,20 @@ public class OrderRepository extends GenericRepository<Order> {
 
     public void deleteOrderById(final UUID orderId) {
         deleteObjectById(orderId);
+    }
+
+    public boolean isProductInOrder(final UUID productId) {
+        ArrayList<Order> orders = getOrders();
+
+        for (Order order : orders) {
+            for (Product product : order.getProducts()) {
+                if (product.getId().equals(productId)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
