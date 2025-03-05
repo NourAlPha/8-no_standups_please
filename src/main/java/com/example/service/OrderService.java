@@ -34,7 +34,7 @@ public class OrderService extends MainService<Order> {
     public Order getOrderById(final UUID orderId) {
         return orderRepository.getOrderById(orderId);
     }
-    //
+
     public void deleteOrderById(final UUID orderId)
             throws IllegalArgumentException {
         // Removing the order from the user (mimicking referencing).
