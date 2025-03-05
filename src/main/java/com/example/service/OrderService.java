@@ -36,10 +36,10 @@ public class OrderService extends MainService<Order> {
     }
 
     public void deleteOrderById(final UUID orderId) {
-        orderRepository.deleteOrderById(orderId);
-
         // Removing the order from the user (mimicking referencing).
         Order order = orderRepository.getOrderById(orderId);
         userRepository.removeOrderFromUser(order.getUserId(), orderId);
+
+        orderRepository.deleteOrderById(orderId);
     }
 }
