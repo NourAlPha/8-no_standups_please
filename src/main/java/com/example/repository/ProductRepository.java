@@ -56,6 +56,11 @@ public class ProductRepository extends GenericRepository<Product> {
             return;
         }
 
+        if (discount < 0 || discount > FULL_PERCENTAGE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Discount must be between 0 and 100");
+        }
+
         for (UUID productId : productIds) {
             Product product = getProductById(productId);
             double discountFactor =

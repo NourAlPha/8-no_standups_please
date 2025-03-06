@@ -61,6 +61,43 @@ public class CartRepository extends GenericRepository<Cart> {
         deleteObjectById(cartId);
     }
 
+    public void updateProductInAllCarts(final UUID productId,
+                                        final double newPrice) {
+        ArrayList<Cart> carts = getCarts();
+        boolean updated = false;
+
+        for (Cart cart : carts) {
+            for (Product product : cart.getProducts()) {
+                if (product.getId().equals(productId)) {
+                    product.setPrice(newPrice);
+                    updated = true;
+                }
+            }
+        }
+
+        // Only save if there was an update
+        if (updated) {
+            saveAll(carts);
+        }
+    }
+
+    public void removeProductFromAllCarts(final UUID productId) {
+        ArrayList<Cart> carts = getCarts();
+        boolean updated = false;
+
+        for (Cart cart : carts) {
+            boolean removed = cart.getProducts().removeIf(product ->
+                    product.getId().equals(productId));
+            if (removed) {
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            saveAll(carts);
+        }
+    }
+
     @Override
     protected String getDataPath() {
         return cartsPath;
