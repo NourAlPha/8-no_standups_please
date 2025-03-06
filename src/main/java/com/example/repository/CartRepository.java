@@ -61,8 +61,8 @@ public class CartRepository extends GenericRepository<Cart> {
         deleteObjectById(cartId);
     }
 
-    public void updateProductInCart(final UUID productId,
-                                    final double newPrice) {
+    public void updateProductInAllCarts(final UUID productId,
+                                        final double newPrice) {
         ArrayList<Cart> carts = getCarts();
         boolean updated = false;
 

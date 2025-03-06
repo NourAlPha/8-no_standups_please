@@ -47,7 +47,7 @@ public class ProductService extends MainService<Product> {
                 newName, newPrice);
 
         // Ensure the new price is reflected in all carts
-        cartRepository.updateProductInCart(productId, newPrice);
+        cartRepository.updateProductInAllCarts(productId, newPrice);
 
         return updatedProduct;
     }
@@ -60,7 +60,7 @@ public class ProductService extends MainService<Product> {
         // these products
         for (UUID productId : productIds) {
             Product product = productRepository.getProductById(productId);
-            cartRepository.updateProductInCart(productId, product.getPrice());
+            cartRepository.updateProductInAllCarts(productId, product.getPrice());
         }
     }
 
