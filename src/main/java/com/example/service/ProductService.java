@@ -5,7 +5,9 @@ import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -45,7 +47,7 @@ public class ProductService extends MainService<Product> {
                 newName, newPrice);
 
         // Ensure the new price is reflected in all carts
-        cartRepository.updateCartPrices(productId, newPrice);
+        cartRepository.updateProductInCart(productId, newPrice);
 
         return updatedProduct;
     }
@@ -58,7 +60,7 @@ public class ProductService extends MainService<Product> {
         // these products
         for (UUID productId : productIds) {
             Product product = productRepository.getProductById(productId);
-            cartRepository.updateCartPrices(productId, product.getPrice());
+            cartRepository.updateProductInCart(productId, product.getPrice());
         }
     }
 
@@ -66,7 +68,8 @@ public class ProductService extends MainService<Product> {
         //Check if the product exists in any active orders
         //If it does, throw an exception
         if (orderRepository.isProductInOrder(productId)) {
-            throw new IllegalStateException("Product is in active orders");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Product is in active orders");
         }
 
         // Delete the product from all carts that contain

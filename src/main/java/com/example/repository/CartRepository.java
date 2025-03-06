@@ -61,7 +61,8 @@ public class CartRepository extends GenericRepository<Cart> {
         deleteObjectById(cartId);
     }
 
-    public void updateCartPrices(final UUID productId, final double newPrice) {
+    public void updateProductInCart(final UUID productId,
+                                    final double newPrice) {
         ArrayList<Cart> carts = getCarts();
         boolean updated = false;
 
@@ -82,13 +83,19 @@ public class CartRepository extends GenericRepository<Cart> {
 
     public void removeProductFromAllCarts(final UUID productId) {
         ArrayList<Cart> carts = getCarts();
+        boolean updated = false;
 
         for (Cart cart : carts) {
-            cart.getProducts().removeIf(product ->
+            boolean removed = cart.getProducts().removeIf(product ->
                     product.getId().equals(productId));
+            if (removed) {
+                updated = true;
+            }
         }
 
-        saveAll(carts);
+        if (updated) {
+            saveAll(carts);
+        }
     }
 
     @Override
