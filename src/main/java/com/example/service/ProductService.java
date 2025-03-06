@@ -60,7 +60,8 @@ public class ProductService extends MainService<Product> {
         // these products
         for (UUID productId : productIds) {
             Product product = productRepository.getProductById(productId);
-            cartRepository.updateProductInAllCarts(productId, product.getPrice());
+            cartRepository.updateProductInAllCarts(productId,
+                    product.getPrice());
         }
     }
 
