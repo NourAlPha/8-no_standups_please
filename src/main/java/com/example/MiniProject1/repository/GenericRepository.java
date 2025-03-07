@@ -1,6 +1,6 @@
-package com.example.repository;
+package com.example.MiniProject1.repository;
 
-import com.example.model.Identifiable;
+import com.example.MiniProject1.model.Identifiable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

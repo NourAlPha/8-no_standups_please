@@ -1,6 +1,6 @@
-package com.example.repository;
+package com.example.MiniProject1.repository;
 
-import com.example.model.Product;
+import com.example.MiniProject1.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;

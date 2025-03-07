@@ -1,7 +1,7 @@
-package com.example.controller;
+package com.example.MiniProject1.controller;
 
-import com.example.model.Order;
-import com.example.service.OrderService;
+import com.example.MiniProject1.model.Order;
+import com.example.MiniProject1.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

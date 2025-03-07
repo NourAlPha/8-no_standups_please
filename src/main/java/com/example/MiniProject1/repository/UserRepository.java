@@ -1,7 +1,7 @@
-package com.example.repository;
+package com.example.MiniProject1.repository;
 
-import com.example.model.Order;
-import com.example.model.User;
+import com.example.MiniProject1.model.Order;
+import com.example.MiniProject1.model.User;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;

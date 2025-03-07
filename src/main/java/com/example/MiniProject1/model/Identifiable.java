@@ -1,4 +1,4 @@
-package com.example.model;
+package com.example.MiniProject1.model;
 
 import java.util.UUID;
 
