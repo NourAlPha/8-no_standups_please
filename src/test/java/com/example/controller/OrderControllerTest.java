@@ -103,7 +103,8 @@ public class OrderControllerTest {
 
     @Test
     public void getOrderById_InvalidId_Returns404() throws Exception {
-        getOrderExpectNotFound(UUID.randomUUID());
+        OrderDTO randomOrder = new OrderDTO(USER.getId(), HUNDRED);
+        getOrderExpectNotFound(randomOrder);
     }
 
     @Test
@@ -151,7 +152,13 @@ public class OrderControllerTest {
         addOrderExpectOk(ORDER_1);
         addOrderToUserExpectOk(ORDER_1, USER);
 
+        getOrdersExpectLength(ONE);
+        getOrderExpectSameId(ORDER_1);
+
         deleteOrderExpectOk(ORDER_1);
+
+        getOrdersExpectLength(ZERO);
+        getOrderExpectNotFound(ORDER_1);
     }
 
     @Test
@@ -165,17 +172,24 @@ public class OrderControllerTest {
         addOrderExpectOk(ORDER_3);
         addOrderToUserExpectOk(ORDER_3, USER);
 
+        getOrdersExpectLength(THREE);
+        getOrderExpectSameId(ORDER_2);
+
         deleteOrderExpectOk(ORDER_2);
+
+        getOrdersExpectLength(TWO);
+        getOrderExpectNotFound(ORDER_2);
     }
 
     @Test
     public void deleteOrderById_InvalidId_Returns404() throws Exception {
-        deleteOrderExpectNotFound(UUID.randomUUID());
+        OrderDTO randomOrder = new OrderDTO(USER.getId(), HUNDRED);
+        deleteOrderExpectNotFound(randomOrder);
     }
 
     @AfterAll
     public static void tearDownAll() throws Exception {
-        deleteUser(USER.getId());
+        deleteUser(USER);
     }
 
     @AfterEach
@@ -200,7 +214,7 @@ public class OrderControllerTest {
         // TODO(NourAlPha): Implement this method after adding user controller.
     }
 
-    private static void deleteUser(final UUID userId) throws Exception {
+    private static void deleteUser(final UserDTO user) throws Exception {
         // TODO(NourAlPha): Implement this method after adding user controller.
     }
 
@@ -231,9 +245,9 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.id").value(order.getId().toString()));
     }
 
-    private void getOrderExpectNotFound(final UUID orderId) throws Exception {
+    private void getOrderExpectNotFound(final OrderDTO order) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(
-                        BASE_URL + "/" + orderId))
+                        BASE_URL + "/" + order.getId()))
                 .andExpect(status().isNotFound());
     }
 
@@ -251,10 +265,10 @@ public class OrderControllerTest {
                 .andExpect(content().string("Order deleted successfully"));
     }
 
-    private void deleteOrderExpectNotFound(final UUID orderId)
+    private void deleteOrderExpectNotFound(final OrderDTO order)
             throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(
-                        BASE_URL + "/delete/" + orderId))
+                        BASE_URL + "/delete/" + order.getId()))
                 .andExpect(status().isNotFound());
     }
 
