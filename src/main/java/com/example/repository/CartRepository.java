@@ -3,9 +3,7 @@ package com.example.repository;
 import com.example.model.Cart;
 import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -39,9 +37,8 @@ public class CartRepository extends GenericRepository<Cart> {
                 return cart;
             }
         }
-
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                String.format("Cart with userId %s not found", userId));
+        Cart newCart = new Cart(userId);
+        return addCart(newCart);
     }
 
     public void addProductToCart(final UUID cartId, final Product product) {
@@ -96,6 +93,17 @@ public class CartRepository extends GenericRepository<Cart> {
         if (updated) {
             saveAll(carts);
         }
+    }
+
+    public double emptyCart(final UUID userId) {
+        Cart cart = getCartByUserId(userId);
+        double totalPrice = 0;
+        for (Product product : cart.getProducts()) {
+            totalPrice += product.getPrice();
+        }
+        cart.setProducts(new ArrayList<>());
+        saveAll(getCarts());
+        return totalPrice;
     }
 
     @Override

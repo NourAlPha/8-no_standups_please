@@ -53,11 +53,18 @@ public class UserService extends MainService<User> {
         userRepository.deleteUserById(userId);
     }
 
-    public void emptyCart(final UUID userId) {
+    public void addOrderToUser(final UUID userId) {
+        User user = getUserById(userId);
         Cart cart = cartService.getCartByUserId(userId);
-        Cart newCart = new Cart(userId);
-        cartService.deleteCartById(cart.getId());
-        cartService.addCart(newCart);
+        List<Product> products = cart.getProducts();
+        double totalPrice = cartService.emptyCart(userId);
+        Order order = new Order(userId, totalPrice, products);
+        user.addOrder(order);
+        userRepository.saveAll(getUsers());
+    }
+
+    public void emptyCart(final UUID userId) {
+        cartService.emptyCart(userId);
     }
 
     public void addProductToCart(final UUID userId, final UUID productId) {
