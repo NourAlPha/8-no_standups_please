@@ -2,9 +2,7 @@ package com.example.repository;
 
 import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -44,8 +42,7 @@ public class ProductRepository extends GenericRepository<Product> {
                 return product;
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                String.format("Product with id %s not found", productId));
+        return null;
     }
 
     // Discount here should be integer as per the description,
@@ -54,11 +51,6 @@ public class ProductRepository extends GenericRepository<Product> {
                               final ArrayList<UUID> productIds) {
         if (productIds.isEmpty()) {
             return;
-        }
-
-        if (discount < 0 || discount > FULL_PERCENTAGE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Discount must be between 0 and 100");
         }
 
         for (UUID productId : productIds) {
