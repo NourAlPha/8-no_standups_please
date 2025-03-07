@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest(classes = MiniProject1Application.class)
 @AutoConfigureMockMvc
@@ -31,13 +33,21 @@ public class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
+    private static final int TWO = 2;
+    private static final int THREE = 3;
+    private static final int HUNDRED = 100;
+    private static final int TWO_HUNDRED = 200;
+    private static final int THREE_HUNDRED = 300;
+
     private static final UserDTO USER = new UserDTO("Ahmed");
     private static final OrderDTO ORDER_1 =
-            new OrderDTO(USER.getId(), 100);
+            new OrderDTO(USER.getId(), HUNDRED);
     private static final OrderDTO ORDER_2 =
-            new OrderDTO(USER.getId(), 200);
+            new OrderDTO(USER.getId(), TWO_HUNDRED);
     private static final OrderDTO ORDER_3 =
-            new OrderDTO(USER.getId(), 300);
+            new OrderDTO(USER.getId(), THREE_HUNDRED);
 
     @BeforeAll
     public static void setUp() throws Exception {
@@ -54,7 +64,7 @@ public class OrderControllerTest {
     public void addOrder_AddingMissingUserId_Returns400()
             throws Exception {
         OrderDTO orderMissingUser =
-                new OrderDTO(UUID.randomUUID(), 100);
+                new OrderDTO(UUID.randomUUID(), HUNDRED);
 
         addOrderExpectBadRequest(orderMissingUser);
     }
@@ -62,7 +72,7 @@ public class OrderControllerTest {
     @Test
     public void addOrder_AddingNullUserId_Returns400() throws Exception {
         OrderDTO orderNullUser =
-                new OrderDTO(null, 200);
+                new OrderDTO(null, TWO_HUNDRED);
 
         addOrderExpectBadRequest(orderNullUser);
     }
@@ -98,7 +108,7 @@ public class OrderControllerTest {
 
     @Test
     public void getOrders_EmptyOrders_ReturnsEmptyList200() throws Exception {
-        getOrdersExpectLength(0);
+        getOrdersExpectLength(ZERO);
     }
 
     @Test
@@ -112,28 +122,28 @@ public class OrderControllerTest {
         addOrderExpectOk(ORDER_3);
         addOrderToUserExpectOk(ORDER_3, USER);
 
-        getOrdersExpectLength(3);
+        getOrdersExpectLength(THREE);
     }
 
     @Test
     public void getOrders_SequentiallyCheckingOrders_OrdersListIsUpToDate()
             throws Exception {
-        getOrdersExpectLength(0);
+        getOrdersExpectLength(ZERO);
 
         addOrderExpectOk(ORDER_1);
         addOrderToUserExpectOk(ORDER_1, USER);
 
-        getOrdersExpectLength(1);
+        getOrdersExpectLength(ONE);
 
         addOrderExpectOk(ORDER_2);
         addOrderToUserExpectOk(ORDER_2, USER);
 
-        getOrdersExpectLength(2);
+        getOrdersExpectLength(TWO);
 
         addOrderExpectOk(ORDER_3);
         addOrderToUserExpectOk(ORDER_3, USER);
 
-        getOrdersExpectLength(3);
+        getOrdersExpectLength(THREE);
     }
 
     @Test
@@ -176,21 +186,21 @@ public class OrderControllerTest {
                     String content = result.getResponse().getContentAsString();
                     orders.addAll(objectMapper.readValue(content,
                             objectMapper.getTypeFactory()
-                            .constructCollectionType(List.class,
-                                    OrderDTO.class)));
+                                    .constructCollectionType(List.class,
+                                            OrderDTO.class)));
                 });
 
         for (final OrderDTO order : orders) {
             mockMvc.perform(MockMvcRequestBuilders.delete(
-                            BASE_URL + "/delete/" + order.getId()));
+                    BASE_URL + "/delete/" + order.getId()));
         }
     }
 
-    private static void createUser(UserDTO user) throws Exception {
+    private static void createUser(final UserDTO user) throws Exception {
         // TODO(NourAlPha): Implement this method after adding user controller.
     }
 
-    private static void deleteUser(UUID userId) throws Exception {
+    private static void deleteUser(final UUID userId) throws Exception {
         // TODO(NourAlPha): Implement this method after adding user controller.
     }
 
@@ -209,8 +219,8 @@ public class OrderControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    private void addOrderToUserExpectOk(OrderDTO order, UserDTO user)
-            throws Exception {
+    private void addOrderToUserExpectOk(final OrderDTO order,
+                                        final UserDTO user) throws Exception {
         // TODO(NourAlPha): Implement this method after adding user controller.
     }
 
@@ -241,7 +251,8 @@ public class OrderControllerTest {
                 .andExpect(content().string("Order deleted successfully"));
     }
 
-    private void deleteOrderExpectNotFound(final UUID orderId) throws Exception {
+    private void deleteOrderExpectNotFound(final UUID orderId)
+            throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(
                         BASE_URL + "/delete/" + orderId))
                 .andExpect(status().isNotFound());
@@ -252,7 +263,7 @@ public class OrderControllerTest {
         private UUID userId;
         private double totalPrice;
 
-        public OrderDTO(UUID userId, double totalPrice) {
+        public OrderDTO(final UUID userId, final double totalPrice) {
             this.id = UUID.randomUUID();
             this.userId = userId;
             this.totalPrice = totalPrice;
@@ -262,7 +273,7 @@ public class OrderControllerTest {
             return userId;
         }
 
-        public void setUserId(UUID userId) {
+        public void setUserId(final UUID userId) {
             this.userId = userId;
         }
 
@@ -270,7 +281,7 @@ public class OrderControllerTest {
             return totalPrice;
         }
 
-        public void setTotalPrice(double totalPrice) {
+        public void setTotalPrice(final double totalPrice) {
             this.totalPrice = totalPrice;
         }
 
@@ -278,7 +289,7 @@ public class OrderControllerTest {
             return id;
         }
 
-        public void setId(UUID id) {
+        public void setId(final UUID id) {
             this.id = id;
         }
     }
@@ -287,7 +298,7 @@ public class OrderControllerTest {
         private UUID id;
         private String name;
 
-        public UserDTO(String name) {
+        public UserDTO(final String name) {
             this.id = UUID.randomUUID();
             this.name = name;
         }
@@ -296,7 +307,7 @@ public class OrderControllerTest {
             return id;
         }
 
-        public void setId(UUID id) {
+        public void setId(final UUID id) {
             this.id = id;
         }
 
@@ -304,7 +315,7 @@ public class OrderControllerTest {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(final String name) {
             this.name = name;
         }
     }
