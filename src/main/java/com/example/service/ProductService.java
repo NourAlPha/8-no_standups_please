@@ -46,7 +46,6 @@ public class ProductService extends MainService<Product> {
         Product updatedProduct = productRepository.updateProduct(productId,
                 newName, newPrice);
 
-        // Ensure the new price is reflected in all carts
         cartRepository.updateProductInAllCarts(productId, newPrice);
 
         return updatedProduct;
@@ -56,8 +55,6 @@ public class ProductService extends MainService<Product> {
                               final ArrayList<UUID> productIds) {
         productRepository.applyDiscount(discount, productIds);
 
-        // After applying the discount, update all carts that contain
-        // these products
         for (UUID productId : productIds) {
             Product product = productRepository.getProductById(productId);
             cartRepository.updateProductInAllCarts(productId,
@@ -66,17 +63,12 @@ public class ProductService extends MainService<Product> {
     }
 
     public void deleteProductById(final UUID productId) {
-        //Check if the product exists in any active orders
-        //If it does, throw an exception
         if (orderRepository.isProductInOrder(productId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Product is in active orders");
         }
 
-        // Delete the product from all carts that contain
-        // this product
         cartRepository.removeProductFromAllCarts(productId);
-
         productRepository.deleteProductById(productId);
     }
 }
