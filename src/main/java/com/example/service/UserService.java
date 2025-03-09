@@ -18,14 +18,17 @@ public class UserService extends MainService<User> {
     private final UserRepository userRepository;
     private final CartService cartService;
     private final ProductService productService;
+    private final OrderService orderService;
 
     @Autowired
     public UserService(final UserRepository userRepository,
                        final CartService cartService,
-                       final ProductService productService) {
+                       final ProductService productService,
+                       final OrderService orderService) {
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.productService = productService;
+        this.orderService = orderService;
     }
 
     public User addUser(final User user) {
@@ -61,6 +64,7 @@ public class UserService extends MainService<User> {
         Order order = new Order(userId, totalPrice, products);
         user.addOrder(order);
         userRepository.saveAll(getUsers());
+        orderService.addOrder(order);
     }
 
     public void emptyCart(final UUID userId) {
