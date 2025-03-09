@@ -62,6 +62,18 @@ public class UserController {
         return userService.getOrdersByUserId(userId);
     }
 
+    @PostMapping("/{userId}/checkout")
+    @Operation(
+            summary = "issue a new order for the user",
+            description = "issue a new order for a specific user in the system by passing the user ID."
+    )
+    public String addOrderToUser(@PathVariable UUID userId){
+        userService.addOrderToUser(userId);
+        return "Order has been add for the user";
+    }
+
+
+
     @PostMapping("/{userId}/removeOrder")
     @Operation(
             summary = "Remove order from user",
