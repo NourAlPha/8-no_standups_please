@@ -68,8 +68,8 @@ public class ProductAPIUnitTests {
 
         mockMvc.perform(post("/product/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Test Product\", " +
-                                "\"price\":100.0}"))
+                        .content("{\"name\":\"Test Product\", "
+                                + "\"price\":100.0}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Test Product")))
                 .andExpect(jsonPath("$.price", is(TEST_PRODUCT_PRICE)));
@@ -87,8 +87,8 @@ public class ProductAPIUnitTests {
     void testAddProductWithNegativePrice() throws Exception {
         mockMvc.perform(post("/product/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Test Product\", " +
-                                "\"price\":-10.0}"))
+                        .content("{\"name\":\"Test Product\", "
+                                + "\"price\":-10.0}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -160,8 +160,8 @@ public class ProductAPIUnitTests {
 
         mockMvc.perform(put("/product/update/" + productId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newName\":\"Updated Product\", " +
-                                "\"newPrice\":80.0}"))
+                        .content("{\"newName\":\"Updated Product\", "
+                                + "\"newPrice\":80.0}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Updated Product")))
                 .andExpect(jsonPath("$.price", is(UPDATED_PRODUCT_PRICE)));
@@ -175,8 +175,8 @@ public class ProductAPIUnitTests {
 
         mockMvc.perform(put("/product/update/" + productId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newName\":\"Updated Product\", " +
-                                "\"newPrice\":80.0}"))
+                        .content("{\"newName\":\"Updated Product\", "
+                                + "\"newPrice\":80.0}"))
                 .andExpect(status().isNotFound());
     }
 
