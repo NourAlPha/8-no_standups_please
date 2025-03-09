@@ -32,6 +32,10 @@ public class OrderService extends MainService<Order> {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "User ID is required");
             }
+            if (order.getProducts() == null || order.getProducts().isEmpty()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Products are required");
+            }
             // Checking if the user exists.
             userRepository.getUserById(order.getUserId());
             orderRepository.addOrder(order);
