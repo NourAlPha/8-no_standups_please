@@ -17,10 +17,12 @@ public class Order implements Identifiable {
         this.id = UUID.randomUUID();
     }
 
-    public Order(final UUID userId, final double totalPrice) {
+    public Order(final UUID userId, final double totalPrice,
+                 final List<Product> products) {
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.totalPrice = totalPrice;
+        this.products = products;
     }
 
     public UUID getId() {

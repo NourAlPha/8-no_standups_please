@@ -1,5 +1,7 @@
 package com.example.controller;
 
+
+
 import com.example.model.Order;
 import com.example.model.User;
 import com.example.service.UserService;
@@ -13,8 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
-@Tag(name = "User Controller", description = "Endpoints related to Users")
+@RequestMapping("/users")
+@Tag(name = "User Controller", description = "Endpoints related to users")
 
 public class UserController {
     private final UserService userService;
@@ -60,7 +62,61 @@ public class UserController {
         return userService.getOrdersByUserId(userId);
     }
 
+    @PostMapping("/{userId}/removeOrder")
+    @Operation(
+            summary = "Remove order from user",
+            description = "Removes an order from a user by his id and the "
+                    + "order id"
+    )
+    public String removeOrderFromUser(@PathVariable final UUID userId,
+                                      @RequestParam final UUID orderId) {
+        userService.removeOrderFromUser(userId, orderId);
+        return "Order has been removed from user";
+    }
+
+    @DeleteMapping("/{userId}/emptyCart")
+    @Operation(
+            summary = "Empty cart",
+            description = "Empties the cart of a user by his id"
+    )
+    public String emptyCart(@PathVariable final UUID userId) {
+        userService.emptyCart(userId);
+        return "Cart has been emptied";
+    }
+
+    @PutMapping("/addProductToCart")
+    @Operation(
+            summary = "Add product to cart",
+            description = "Adds a product to the cart of a user by his id and "
+                    + "the product id"
+    )
+    public String addProductToCart(@RequestParam final UUID userId,
+                                   @RequestParam final UUID productId) {
+        userService.addProductToCart(userId, productId);
+        return "Product has been added to cart";
+    }
+
+    @PutMapping("/deleteProductFromCart")
+    @Operation(
+            summary = "Delete product from cart",
+            description = "Deletes a product from the cart of a user by his id "
+                    + "and the product id"
+    )
+    public String deleteProductFromCart(@RequestParam final UUID userId,
+                                        @RequestParam final UUID productId) {
+        userService.deleteProductFromCart(userId, productId);
+        return "Product has been deleted from cart";
+    }
 
 
+    @DeleteMapping("/delete/{userId}")
+    @Operation(
+            summary = "Delete user",
+            description = "Deletes a user by his id"
+    )
+    public String deleteUserById(@PathVariable final UUID userId) {
+        userService.deleteUserById(userId);
+        return "User deleted";
+    }
 
 }
