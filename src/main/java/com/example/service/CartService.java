@@ -38,4 +38,8 @@ public class CartService {
     public void addProductToCart(UUID cartId, Product product) {
         cartRepository.addProductToCart(cartId, product);
     }
+
+    public void deleteCartById(UUID cartId) {
+        cartRepository.deleteCartById(cartId);
+    }
 }

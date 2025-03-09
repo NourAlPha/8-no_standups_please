@@ -54,4 +54,13 @@ public class CartController {
         cartService.addProductToCart(cartId, product);
         return "Product added to cart successfully.";
     }
+
+    @DeleteMapping("/delete/{cartId}")
+    @Operation(summary = "Delete a cart", description = "Deletes a cart by its ID")
+    @ApiResponse(responseCode = "200", description = "Cart deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Cart not found")
+    public String deleteCartById(@PathVariable UUID cartId) {
+        cartService.deleteCartById(cartId);
+        return "Cart deleted successfully";
+    }
 }
