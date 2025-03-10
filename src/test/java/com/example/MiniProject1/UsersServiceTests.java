@@ -82,8 +82,8 @@ class UsersServiceTests {
     void addUser_ShouldThrowExceptionForEmptyName() {
         User invalidUser = new User("");
 
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.addUser(invalidUser));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.addUser(invalidUser));
         verify(userRepository, never()).addUser(any());
     }
     @Test
@@ -154,7 +154,8 @@ class UsersServiceTests {
     void addOrderToUser_ShouldAddOrderSuccessfully() {
         // Arrange
         when(userRepository.getUserById(mockUser.getId())).thenReturn(mockUser);
-        when(cartService.getCartByUserId(mockUser.getId())).thenReturn(mockCart);
+        when(cartService.getCartByUserId(mockUser.getId()))
+                .thenReturn(mockCart);
         final double productPrice = 1000.0;
         when(cartService.emptyCart(mockUser.getId())).thenReturn(productPrice);
         when(mockCart.getProducts()).thenReturn(List.of(mockProduct));

@@ -6,7 +6,15 @@ import com.example.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +37,7 @@ public class UserController {
             summary = "Create new user",
             description = "Adds a new user to the system."
     )
-    public User addUser(@RequestBody User user) {
+    public User addUser(@RequestBody final User user) {
         return userService.addUser(user);
     }
 
@@ -47,17 +55,17 @@ public class UserController {
             summary = "Get specific user",
             description = "get a specific user in the system."
     )
-    public User getUserById(@PathVariable UUID userId){
+    public User getUserById(@PathVariable final UUID userId){
         return userService.getUserById(userId);
     }
 
     @GetMapping("/{userId}/orders")
     @Operation(
             summary = "Get the orders of specific user",
-            description = "get the orders of specific user " +
-                    "in the system by passing the user ID."
+            description = "get the orders of specific user "
+                    + "in the system by passing the user ID."
     )
-    public List<Order> getOrdersByUserId(@PathVariable UUID userId){
+    public List<Order> getOrdersByUserId(@PathVariable final UUID userId) {
         return userService.getOrdersByUserId(userId);
     }
 
@@ -66,7 +74,7 @@ public class UserController {
             summary = "issue a new order for the user",
             description = "issue a new order for a specific user."
     )
-    public String addOrderToUser(@PathVariable UUID userId){
+    public String addOrderToUser(@PathVariable final UUID userId) {
         userService.addOrderToUser(userId);
         return "Order added successfully";
     }

@@ -50,7 +50,8 @@ public class UserService extends MainService<User> {
         }
         User user = userRepository.getUserById(userId);
         if (user == null) {
-            throw new IllegalArgumentException("User not found with ID: " + userId);
+            throw new IllegalArgumentException("User not found with ID: "
+                    + userId);
         }
         return user;
     }
@@ -79,7 +80,8 @@ public class UserService extends MainService<User> {
         try {
             userRepository.deleteUserById(userId);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete user with ID: " + userId, e);
+            throw new RuntimeException("Failed to delete user with ID: "
+                    + userId, e);
         }
 
     }
@@ -89,7 +91,8 @@ public class UserService extends MainService<User> {
         Cart cart = cartService.getCartByUserId(userId);
         List<Product> products = cart.getProducts();
         if (products.isEmpty()) {
-            throw new IllegalArgumentException("Cart is empty. Cannot create an order.");
+            throw new IllegalArgumentException("Cart"
+                    + " is empty. Cannot create an order.");
         }
         double totalPrice = cartService.emptyCart(userId);
         Order order = new Order(userId, totalPrice, products);
