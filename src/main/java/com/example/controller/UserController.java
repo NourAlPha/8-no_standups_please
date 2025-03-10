@@ -1,7 +1,5 @@
 package com.example.controller;
 
-
-
 import com.example.model.Order;
 import com.example.model.User;
 import com.example.service.UserService;
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @Tag(name = "User Controller", description = "Endpoints related to users")
 
 public class UserController {
@@ -56,7 +54,8 @@ public class UserController {
     @GetMapping("/{userId}/orders")
     @Operation(
             summary = "Get the orders of specific user",
-            description = "get the orders of specific user in the system by passing the user ID."
+            description = "get the orders of specific user " +
+                    "in the system by passing the user ID."
     )
     public List<Order> getOrdersByUserId(@PathVariable UUID userId){
         return userService.getOrdersByUserId(userId);
@@ -65,11 +64,11 @@ public class UserController {
     @PostMapping("/{userId}/checkout")
     @Operation(
             summary = "issue a new order for the user",
-            description = "issue a new order for a specific user in the system by passing the user ID."
+            description = "issue a new order for a specific user."
     )
     public String addOrderToUser(@PathVariable UUID userId){
         userService.addOrderToUser(userId);
-        return "Order has been add for the user";
+        return "Order added successfully";
     }
 
 

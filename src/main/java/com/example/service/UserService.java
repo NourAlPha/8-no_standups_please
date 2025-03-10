@@ -32,6 +32,11 @@ public class UserService extends MainService<User> {
     }
 
     public User addUser(final User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        } else if (user.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("User name cannot be empty");
+        }
         return userRepository.addUser(user);
     }
 
@@ -40,10 +45,27 @@ public class UserService extends MainService<User> {
     }
 
     public User getUserById(final UUID userId) {
-        return userRepository.getUserById(userId);
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+        return user;
     }
 
-    public List<Order> getOrdersByUserId(final UUID userId) { return userRepository.getOrdersByUserId(userId); }
+    public List<Order> getOrdersByUserId(final UUID userId) {
+
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        List<Order> orders = userRepository.getOrdersByUserId(userId);
+        if (orders == null) {
+            throw new IllegalArgumentException("User has no orders: " + userId);
+        }
+        return orders;
+    }
 
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
@@ -51,13 +73,24 @@ public class UserService extends MainService<User> {
     }
 
     public void deleteUserById(final UUID userId) {
-        userRepository.deleteUserById(userId);
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        try {
+            userRepository.deleteUserById(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user with ID: " + userId, e);
+        }
+
     }
 
     public void addOrderToUser(final UUID userId) {
         User user = getUserById(userId);
         Cart cart = cartService.getCartByUserId(userId);
         List<Product> products = cart.getProducts();
+        if (products.isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty. Cannot create an order.");
+        }
         double totalPrice = cartService.emptyCart(userId);
         Order order = new Order(userId, totalPrice, products);
         user.addOrder(order);
