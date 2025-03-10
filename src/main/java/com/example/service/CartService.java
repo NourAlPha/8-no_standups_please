@@ -20,22 +20,64 @@ public class CartService {
     }
 
     public Cart addCart(final Cart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart cannot be null");
+        }
+        if (cart.getUserId() == null) {
+            throw new IllegalArgumentException("Cart must have a user ID");
+        }
+
+        Cart existingCart = cartRepository.getCartByUserId(cart.getUserId());
+        if (existingCart != null) {
+            throw new IllegalStateException("A cart already exists for user ID: " + cart.getUserId());
+        }
         return cartRepository.addCart(cart);
     }
 
     public ArrayList<Cart> getCarts() {
-        return cartRepository.getCarts();
+        ArrayList<Cart> carts = cartRepository.getCarts();
+        if (carts == null) {
+            throw new IllegalStateException("No carts found");
+        }
+        return carts;
     }
 
     public Cart getCartById(final UUID cartId) {
-        return cartRepository.getCartById(cartId);
+        if (cartId == null) {
+            throw new IllegalArgumentException("Cart ID cannot be null");
+        }
+        Cart cart = cartRepository.getCartById(cartId);
+        if (cart == null) {
+            throw new IllegalStateException("Cart not found with ID: " + cartId);
+        }
+        return cart;
     }
 
     public Cart getCartByUserId(final UUID userId) {
-        return cartRepository.getCartByUserId(userId);
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        Cart cart = cartRepository.getCartByUserId(userId);
+        if (cart == null) {
+            throw new IllegalStateException("No cart found for user ID: " + userId);
+        }
+        return cart;
     }
 
     public void addProductToCart(final UUID cartId, final Product product) {
+        if (cartId == null) {
+            throw new IllegalArgumentException("Cart ID cannot be null");
+        }
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+        if (product.getId() == null) {
+            throw new IllegalArgumentException("Product must have an ID");
+        }
+        Cart cart = cartRepository.getCartById(cartId);
+        if (cart == null) {
+            throw new IllegalStateException("Cart not found with ID: " + cartId);
+        }
         cartRepository.addProductToCart(cartId, product);
     }
 

@@ -66,15 +66,19 @@ public class ProductService extends MainService<Product> {
     }
 
     public void deleteProductById(final UUID productId) {
-        //Check if the product exists in any active orders
-        //If it does, throw an exception
-        if (orderRepository.isProductInOrder(productId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Product is in active orders");
+        if (productId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product ID cannot be null");
         }
 
-        // Delete the product from all carts that contain
-        // this product
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with ID: " + productId);
+        }
+
+        if (orderRepository.isProductInOrder(productId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product is in active orders");
+        }
+
         cartRepository.removeProductFromAllCarts(productId);
 
         productRepository.deleteProductById(productId);
