@@ -15,11 +15,11 @@ public class CartService {
     private final CartRepository cartRepository;
 
     @Autowired
-    public CartService(CartRepository cartRepository) {
+    public CartService(final CartRepository cartRepository) {
         this.cartRepository = cartRepository;
     }
 
-    public Cart addCart(Cart cart) {
+    public Cart addCart(final Cart cart) {
         return cartRepository.addCart(cart);
     }
 
@@ -27,19 +27,25 @@ public class CartService {
         return cartRepository.getCarts();
     }
 
-    public Cart getCartById(UUID cartId) {
+    public Cart getCartById(final UUID cartId) {
         return cartRepository.getCartById(cartId);
     }
 
-    public Cart getCartByUserId(UUID userId) {
+    public Cart getCartByUserId(final UUID userId) {
         return cartRepository.getCartByUserId(userId);
     }
 
-    public void addProductToCart(UUID cartId, Product product) {
+    public void addProductToCart(final UUID cartId, final Product product) {
         cartRepository.addProductToCart(cartId, product);
     }
 
-    public void deleteCartById(UUID cartId) {
-        cartRepository.deleteCartById(cartId);
+    public void deleteProductFromCart(final UUID cartId,
+                                      final Product product) {
+        cartRepository.deleteProductFromCart(cartId, product);
+    }
+
+    public double emptyCart(final UUID cartId) {
+        return cartRepository.emptyCart(cartId);
     }
 }
+
