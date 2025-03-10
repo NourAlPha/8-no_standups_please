@@ -44,6 +44,10 @@ public class CartService {
         cartRepository.deleteProductFromCart(cartId, product);
     }
 
+    public void deleteCartById(final UUID cartId) {
+        cartRepository.deleteCartById(cartId);
+    }
+
     public double emptyCart(final UUID cartId) {
         return cartRepository.emptyCart(cartId);
     }
