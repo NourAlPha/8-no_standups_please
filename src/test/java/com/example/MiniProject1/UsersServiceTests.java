@@ -18,7 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -52,9 +56,7 @@ class UsersServiceTests {
         MockitoAnnotations.openMocks(this);
 
         mockUser = new User("John Doe");
-        //UUID userId = mockUser.getId();
-        //mockCart = new Cart(userId);
-        double productPrice = 1000.0;
+        final double productPrice = 1000.0;
         mockProduct = new Product("Laptop", productPrice);
     }
 
@@ -71,7 +73,8 @@ class UsersServiceTests {
 
     @Test
     void addUser_ShouldThrowExceptionForNullUser() {
-        assertThrows(IllegalArgumentException.class, () -> userService.addUser(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.addUser(null));
         verify(userRepository, never()).addUser(any());
     }
 
@@ -134,16 +137,16 @@ class UsersServiceTests {
     void getUserById_ShouldThrowExceptionForNonExistentUser() {
         when(userRepository.getUserById(mockUser.getId())).thenReturn(null);
 
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.getUserById(mockUser.getId()));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.getUserById(mockUser.getId()));
         verify(userRepository, times(1)).
                 getUserById(mockUser.getId());
     }
 
     @Test
     void getUserById_ShouldHandleInvalidUUID() {
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.getUserById(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.getUserById(null));
         verify(userRepository, never()).getUserById(any());
     }
 
@@ -152,7 +155,8 @@ class UsersServiceTests {
         // Arrange
         when(userRepository.getUserById(mockUser.getId())).thenReturn(mockUser);
         when(cartService.getCartByUserId(mockUser.getId())).thenReturn(mockCart);
-        when(cartService.emptyCart(mockUser.getId())).thenReturn(1000.0);
+        final double productPrice = 1000.0;
+        when(cartService.emptyCart(mockUser.getId())).thenReturn(productPrice);
         when(mockCart.getProducts()).thenReturn(List.of(mockProduct));
 
         ArrayList<User> mockUsers = new ArrayList<>();
@@ -169,24 +173,27 @@ class UsersServiceTests {
     void addOrderToUser_ShouldThrowExceptionForNonExistentUser() {
         when(userRepository.getUserById(mockUser.getId())).thenReturn(null);
 
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.addOrderToUser(mockUser.getId()));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.addOrderToUser(mockUser.getId()));
         verify(cartService, never()).getCartByUserId(any());
     }
 
     @Test
     void addOrderToUser_ShouldHandleEmptyCart() {
         // Arrange
-        when(userRepository.getUserById(mockUser.getId())).thenReturn(mockUser);
-        when(cartService.getCartByUserId(mockUser.getId())).thenReturn(mockCart);
-        when(cartService.emptyCart(mockUser.getId())).thenReturn(0.0);
+        when(userRepository.getUserById(mockUser.getId()))
+                .thenReturn(mockUser);
+        when(cartService.getCartByUserId(mockUser.getId()))
+                .thenReturn(mockCart);
+        final double productPrice = 0.0;
+        when(cartService.emptyCart(mockUser.getId())).thenReturn(productPrice);
 
         // Now this works because mockCart is a Mockito mock
         when(mockCart.getProducts()).thenReturn(List.of());
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.addOrderToUser(mockUser.getId()));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.addOrderToUser(mockUser.getId()));
         verify(orderService, never()).addOrder(any());
     }
 
@@ -208,16 +215,16 @@ class UsersServiceTests {
                 .deleteUserById(randomUserId);
 
         // Act & Assert
-        assertThrows(RuntimeException.class
-                , () -> userService.deleteUserById(randomUserId));
+        assertThrows(RuntimeException.class,
+                () -> userService.deleteUserById(randomUserId));
         verify(userRepository, times(1))
                 .deleteUserById(randomUserId);
     }
 
     @Test
     void deleteUserById_ShouldHandleInvalidUUID() {
-        assertThrows(IllegalArgumentException.class
-                , () -> userService.deleteUserById(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.deleteUserById(null));
         verify(userRepository, never())
                 .deleteUserById(any());
     }
