@@ -46,7 +46,7 @@ public class UserController {
             summary = "Gets all users",
             description = "gets all the users in the system."
     )
-    public ArrayList<User> getUsers(){
+    public ArrayList<User> getUsers() {
         return userService.getUsers();
     }
 
@@ -55,7 +55,7 @@ public class UserController {
             summary = "Get specific user",
             description = "get a specific user in the system."
     )
-    public User getUserById(@PathVariable final UUID userId){
+    public User getUserById(@PathVariable final UUID userId) {
         return userService.getUserById(userId);
     }
 
