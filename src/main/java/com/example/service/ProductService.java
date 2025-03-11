@@ -1,13 +1,12 @@
 package com.example.service;
 
+import com.example.exception.InvalidActionException;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -66,11 +65,8 @@ public class ProductService extends MainService<Product> {
     }
 
     public void deleteProductById(final UUID productId) {
-        //Check if the product exists in any active orders
-        //If it does, throw an exception
         if (orderRepository.isProductInOrder(productId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Product is in active orders");
+            throw new InvalidActionException("Product is in active orders");
         }
 
         // Delete the product from all carts that contain

@@ -1,14 +1,14 @@
 package com.example.repository;
 
+import com.example.exception.NotFoundException;
+import com.example.exception.ValidationException;
 import com.example.model.Identifiable;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class GenericRepository<T extends Identifiable>
-                                                    extends MainRepository<T> {
+        extends MainRepository<T> {
 
     private ArrayList<T> objects;
 
@@ -18,6 +18,10 @@ public abstract class GenericRepository<T extends Identifiable>
     }
 
     protected T addObject(final T object) {
+        if (object.getId() == null) {
+            throw new ValidationException("Object id cannot be null");
+        }
+
         if (objects != null) {
             objects.add(object);
         }
@@ -27,6 +31,9 @@ public abstract class GenericRepository<T extends Identifiable>
     }
 
     protected T getObjectById(final UUID id) {
+        if (id == null) {
+            throw new ValidationException("id cannot be null");
+        }
         initializeObjects();
         for (T object : objects) {
             if (object.getId().equals(id)) {
@@ -34,11 +41,13 @@ public abstract class GenericRepository<T extends Identifiable>
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("id %s not found", id));
+        throw new NotFoundException(String.format("id %s not found", id));
     }
 
     protected void deleteObjectById(final UUID id) {
+        if (id == null) {
+            throw new ValidationException("id cannot be null");
+        }
         T object = getObjectById(id);
         objects.remove(object);
         overrideData(objects);
