@@ -78,7 +78,11 @@ public class CartController {
             description = "Cart deleted successfully")
     @ApiResponse(responseCode = "404", description = "Cart not found")
     public String deleteCartById(@PathVariable final UUID cartId) {
-        cartService.deleteCartById(cartId);
-        return "Cart deleted successfully";
+        try {
+            cartService.deleteCartById(cartId);
+            return "Cart deleted successfully";
+        } catch (Exception e) {
+            return "Cart not found";
+        }
     }
 }

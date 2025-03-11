@@ -173,7 +173,7 @@ class UserServiceTest {
 
         ArrayList<User> mockUsers = new ArrayList<>();
         mockUsers.add(mockUser);
-        when(userRepository.getObjects()).thenReturn(mockUsers);
+        when(userRepository.getObjectsArray()).thenReturn(mockUsers);
 
         userService.addOrderToUser(mockUser.getId());
 

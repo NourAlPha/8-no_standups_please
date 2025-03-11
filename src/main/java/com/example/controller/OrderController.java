@@ -61,7 +61,11 @@ public class OrderController {
             description = "Deletes an order by its from the system."
     )
     public String deleteOrderById(@PathVariable final UUID orderId) {
-        orderService.deleteOrderById(orderId);
-        return "Order deleted successfully";
+        try {
+            orderService.deleteOrderById(orderId);
+            return "Order deleted successfully";
+        } catch (Exception e) {
+            return "Order not found";
+        }
     }
 }

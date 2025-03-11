@@ -57,8 +57,12 @@ public class ProductController {
 
     @DeleteMapping("/delete/{productId}")
     public String deleteProductById(@PathVariable final UUID productId) {
-        productService.deleteProductById(productId);
-        return "Product deleted successfully";
+        try {
+            productService.deleteProductById(productId);
+            return "Product deleted successfully";
+        } catch (Exception e) {
+            return "Product not found";
+        }
     }
 
     @PutMapping("/applyDiscount")

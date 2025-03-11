@@ -36,7 +36,7 @@ public class ProductRepository extends GenericRepository<Product> {
         Product product = getProductById(productId);
         product.setName(newName);
         product.setPrice(newPrice);
-        overrideData(getProducts());
+        overrideData(getObjectsArray());
         return product;
     }
 
@@ -54,7 +54,8 @@ public class ProductRepository extends GenericRepository<Product> {
                     (FULL_PERCENTAGE - discount) / FULL_PERCENTAGE;
             product.setPrice(product.getPrice() * discountFactor);
         }
-        overrideData(getProducts());
+
+        overrideData(getObjectsArray());
     }
 
     public void deleteProductById(final UUID productId) {
