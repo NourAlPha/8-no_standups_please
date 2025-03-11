@@ -2,9 +2,7 @@ package com.example.repository;
 
 import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -35,17 +33,11 @@ public class ProductRepository extends GenericRepository<Product> {
 
     public Product updateProduct(final UUID productId,
                                  final String newName, final double newPrice) {
-        ArrayList<Product> products = getProducts();
-        for (Product product : products) {
-            if (product.getId().equals(productId)) {
-                product.setName(newName);
-                product.setPrice(newPrice);
-                overrideData(products);
-                return product;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                String.format("Product with id %s not found", productId));
+        Product product = getProductById(productId);
+        product.setName(newName);
+        product.setPrice(newPrice);
+        overrideData(getProducts());
+        return product;
     }
 
     // Discount here should be integer as per the description,
@@ -54,11 +46,6 @@ public class ProductRepository extends GenericRepository<Product> {
                               final ArrayList<UUID> productIds) {
         if (productIds.isEmpty()) {
             return;
-        }
-
-        if (discount < 0 || discount > FULL_PERCENTAGE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Discount must be between 0 and 100");
         }
 
         for (UUID productId : productIds) {

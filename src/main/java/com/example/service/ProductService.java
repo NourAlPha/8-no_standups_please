@@ -1,13 +1,13 @@
 package com.example.service;
 
+import com.example.exception.InvalidActionException;
+import com.example.exception.ValidationException;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -19,6 +19,7 @@ public class ProductService extends MainService<Product> {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
+    private static final double FULL_PERCENTAGE = 100.0;
 
     @Autowired
     public ProductService(final ProductRepository productRepository,
@@ -30,6 +31,9 @@ public class ProductService extends MainService<Product> {
     }
 
     public Product addProduct(final Product product) {
+        if (product.getId() == null) {
+            throw new ValidationException("Product id cannot be null");
+        }
         return productRepository.addProduct(product);
     }
 
@@ -38,6 +42,9 @@ public class ProductService extends MainService<Product> {
     }
 
     public Product getProductById(final UUID productId) {
+        if (productId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         return productRepository.getProductById(productId);
     }
 
@@ -54,6 +61,11 @@ public class ProductService extends MainService<Product> {
 
     public void applyDiscount(final double discount,
                               final ArrayList<UUID> productIds) {
+        if (discount < 0 || discount > FULL_PERCENTAGE) {
+            throw new InvalidActionException(
+                    "Discount must be between 0 and 100");
+        }
+
         productRepository.applyDiscount(discount, productIds);
 
         // After applying the discount, update all carts that contain
@@ -67,21 +79,14 @@ public class ProductService extends MainService<Product> {
 
     public void deleteProductById(final UUID productId) {
         if (productId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Product ID cannot be null");
+            throw new ValidationException("id cannot be null");
         }
-
-        Product product = productRepository.getProductById(productId);
-        if (product == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Product not found with ID: " + productId);
-        }
-
         if (orderRepository.isProductInOrder(productId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Product is in active orders");
+            throw new InvalidActionException("Product is in active orders");
         }
 
+        // Delete the product from all carts that contain
+        // this product
         cartRepository.removeProductFromAllCarts(productId);
 
         productRepository.deleteProductById(productId);

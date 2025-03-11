@@ -1,5 +1,8 @@
 package com.example.service;
 
+import com.example.exception.InvalidActionException;
+import com.example.exception.NotFoundException;
+import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Order;
 import com.example.model.Product;
@@ -32,6 +35,15 @@ public class UserService extends MainService<User> {
     }
 
     public User addUser(final User user) {
+        if (user == null) {
+            throw new ValidationException("User cannot be null");
+        }
+        if (user.getId() == null) {
+            throw new ValidationException("User id cannot be null");
+        }
+        if (user.getName().trim().isEmpty()) {
+            throw new ValidationException("User name cannot be empty");
+        }
         return userRepository.addUser(user);
     }
 
@@ -40,11 +52,21 @@ public class UserService extends MainService<User> {
     }
 
     public User getUserById(final UUID userId) {
+        if (userId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         return userRepository.getUserById(userId);
     }
 
     public List<Order> getOrdersByUserId(final UUID userId) {
-        return userRepository.getOrdersByUserId(userId);
+        if (userId == null) {
+            throw new ValidationException("User ID cannot be null");
+        }
+        List<Order> orders = userRepository.getOrdersByUserId(userId);
+        if (orders == null) {
+            throw new InvalidActionException("User has no orders: " + userId);
+        }
+        return orders;
     }
 
 
@@ -53,13 +75,30 @@ public class UserService extends MainService<User> {
     }
 
     public void deleteUserById(final UUID userId) {
-        userRepository.deleteUserById(userId);
+        try {
+            if (userId == null) {
+                throw new ValidationException("id cannot be null");
+            }
+            userRepository.deleteUserById(userId);
+        } catch (ValidationException e) {
+            throw new ValidationException("User ID cannot be null");
+        } catch (NotFoundException e) {
+            throw new NotFoundException("User not found with ID: " + userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user with ID: "
+                    + userId, e);
+        }
+
     }
 
     public void addOrderToUser(final UUID userId) {
         User user = getUserById(userId);
         Cart cart = cartService.getCartByUserId(userId);
         List<Product> products = cart.getProducts();
+        if (products.isEmpty()) {
+            throw new InvalidActionException("Cart"
+                    + " is empty. Cannot create an order.");
+        }
         double totalPrice = cartService.emptyCart(userId);
         Order order = new Order(userId, totalPrice, products);
         user.addOrder(order);
