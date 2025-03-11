@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ValidationException;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
@@ -43,12 +44,9 @@ public class ProductServiceTest {
         UUID productId = null;
 
         // When & Then
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             productService.deleteProductById(productId);
         });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        assertEquals("Product ID cannot be null", exception.getReason());
 
     }
 
@@ -59,13 +57,10 @@ public class ProductServiceTest {
         when(productRepository.getProductById(productId)).thenReturn(null);
 
         // When & Then
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             productService.deleteProductById(productId);
         });
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertEquals("Product not found with ID: " + productId, exception.getReason());
-
+        
     }
 
     @Test

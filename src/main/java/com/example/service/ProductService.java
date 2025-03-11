@@ -81,12 +81,15 @@ public class ProductService extends MainService<Product> {
         if (productId == null) {
             throw new ValidationException("id cannot be null");
         }
+
+        if (productRepository.getProductById(productId) == null) {
+            throw new ValidationException("Product not found");
+        }
+
         if (orderRepository.isProductInOrder(productId)) {
             throw new InvalidActionException("Product is in active orders");
         }
 
-        // Delete the product from all carts that contain
-        // this product
         cartRepository.removeProductFromAllCarts(productId);
 
         productRepository.deleteProductById(productId);

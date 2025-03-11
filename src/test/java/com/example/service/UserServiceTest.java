@@ -1,4 +1,4 @@
-package com.example.MiniProject1;
+package com.example.service;
 
 import com.example.exception.InvalidActionException;
 import com.example.exception.NotFoundException;
@@ -8,9 +8,6 @@ import com.example.model.Order;
 import com.example.model.Product;
 import com.example.model.User;
 import com.example.repository.UserRepository;
-import com.example.service.CartService;
-import com.example.service.OrderService;
-import com.example.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,7 +31,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 
 
-class UsersServiceTests {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;

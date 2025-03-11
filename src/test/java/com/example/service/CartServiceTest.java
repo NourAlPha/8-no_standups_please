@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.exception.InvalidActionException;
+import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
@@ -51,7 +53,7 @@ class CartServiceTest {
         Cart cart = null;
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> cartService.addCart(cart));
+        assertThrows(ValidationException.class, () -> cartService.addCart(cart));
         verify(cartRepository, never()).addCart(any());
     }
 
@@ -65,11 +67,11 @@ class CartServiceTest {
         when(cartRepository.getCartByUserId(userId)).thenReturn(existingCart);
 
         // Then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> {
             cartService.addCart(existingCart);
         });
 
-        assertEquals("A cart already exists for user ID: " + userId, exception.getMessage());
+        assertEquals("Invalid action: A cart already exists for user ID: " + userId, exception.getMessage());
 
         verify(cartRepository, never()).addCart(existingCart);
     }
@@ -112,7 +114,7 @@ class CartServiceTest {
         when(cartRepository.getCarts()).thenReturn(null);
 
         // When & Then
-        assertThrows(IllegalStateException.class, () -> cartService.getCarts());
+        assertThrows(ValidationException.class, () -> cartService.getCarts());
         verify(cartRepository, times(1)).getCarts();
     }
 
@@ -139,7 +141,7 @@ class CartServiceTest {
         when(cartRepository.getCartById(invalidCartId)).thenReturn(null);
 
         // When & Then
-        assertThrows(IllegalStateException.class, () -> cartService.getCartById(invalidCartId));
+        assertThrows(ValidationException.class, () -> cartService.getCartById(invalidCartId));
 
     }
 
@@ -150,7 +152,7 @@ class CartServiceTest {
         when(cartRepository.getCartById(cartId)).thenReturn(null);
 
         // When & Then
-        assertThrows(IllegalStateException.class, () -> cartService.getCartById(cartId));
+        assertThrows(ValidationException.class, () -> cartService.getCartById(cartId));
         verify(cartRepository, times(1)).getCartById(cartId);
     }
 
@@ -177,10 +179,10 @@ class CartServiceTest {
         // Given
         UUID invalidCartId = UUID.randomUUID();
         Product product = new Product("Product 1", 10.0);
-        doThrow(new IllegalStateException("Cart not found")).when(cartRepository).addProductToCart(invalidCartId, product);
+        doThrow(new ValidationException("Cart not found")).when(cartRepository).addProductToCart(invalidCartId, product);
 
         // When & Then
-        assertThrows(IllegalStateException.class, () -> cartService.addProductToCart(invalidCartId, product));
+        assertThrows(ValidationException.class, () -> cartService.addProductToCart(invalidCartId, product));
     }
 
     @Test
@@ -190,7 +192,7 @@ class CartServiceTest {
         Product product = null;
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> cartService.addProductToCart(cartId, product));
+        assertThrows(ValidationException.class, () -> cartService.addProductToCart(cartId, product));
         verify(cartRepository, never()).addProductToCart(any(), any());
     }
 }
