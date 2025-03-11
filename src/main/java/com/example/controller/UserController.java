@@ -90,7 +90,7 @@ public class UserController {
     public String removeOrderFromUser(@PathVariable final UUID userId,
                                       @RequestParam final UUID orderId) {
         userService.removeOrderFromUser(userId, orderId);
-        return "Order has been removed from user";
+        return "Order removed successfully";
     }
 
     @DeleteMapping("/{userId}/emptyCart")
@@ -100,7 +100,7 @@ public class UserController {
     )
     public String emptyCart(@PathVariable final UUID userId) {
         userService.emptyCart(userId);
-        return "Cart has been emptied";
+        return "Cart emptied successfully";
     }
 
     @PutMapping("/addProductToCart")
@@ -112,7 +112,7 @@ public class UserController {
     public String addProductToCart(@RequestParam final UUID userId,
                                    @RequestParam final UUID productId) {
         userService.addProductToCart(userId, productId);
-        return "Product has been added to cart";
+        return "Product added to cart";
     }
 
     @PutMapping("/deleteProductFromCart")
@@ -123,8 +123,7 @@ public class UserController {
     )
     public String deleteProductFromCart(@RequestParam final UUID userId,
                                         @RequestParam final UUID productId) {
-        userService.deleteProductFromCart(userId, productId);
-        return "Product has been deleted from cart";
+        return userService.deleteProductFromCart(userId, productId);
     }
 
 
@@ -134,8 +133,11 @@ public class UserController {
             description = "Deletes a user by his id"
     )
     public String deleteUserById(@PathVariable final UUID userId) {
-        userService.deleteUserById(userId);
-        return "User deleted";
+        try {
+            userService.deleteUserById(userId);
+            return "User deleted successfully";
+        } catch (Exception e) {
+            return "User not found";
+        }
     }
-
 }

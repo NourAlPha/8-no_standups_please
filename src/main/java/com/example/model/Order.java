@@ -25,6 +25,14 @@ public class Order implements Identifiable {
         this.products = products;
     }
 
+    public Order(final UUID id, final UUID userId, final double totalPrice,
+                 final List<Product> products) {
+        this.id = id;
+        this.userId = userId;
+        this.totalPrice = totalPrice;
+        this.products = products;
+    }
+
     public UUID getId() {
         return id;
     }

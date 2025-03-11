@@ -20,6 +20,10 @@ public abstract class GenericRepository<T extends Identifiable>
         return objects;
     }
 
+    public ArrayList<T> getObjectsArray() {
+        return objects;
+    }
+
     public T addObject(final T object) {
         if (objects != null) {
             objects.add(object);
@@ -46,8 +50,6 @@ public abstract class GenericRepository<T extends Identifiable>
     }
 
     private void initializeObjects() {
-        if (objects == null) {
-            objects = findAll();
-        }
+        objects = findAll();
     }
 }

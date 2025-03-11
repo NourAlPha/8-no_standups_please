@@ -80,7 +80,7 @@ public class UserService extends MainService<User, UserRepository> {
         double totalPrice = cartService.emptyCart(userId);
         Order order = new Order(userId, totalPrice, products);
         user.addOrder(order);
-        userRepository.saveAll(getUsers());
+        userRepository.saveAll(userRepository.getObjectsArray());
         orderService.addOrder(order);
     }
 
@@ -94,9 +94,15 @@ public class UserService extends MainService<User, UserRepository> {
         cartService.addProductToCart(cart.getId(), product);
     }
 
-    public void deleteProductFromCart(final UUID userId, final UUID productId) {
+    public String deleteProductFromCart(final UUID userId,
+                                       final UUID productId) {
         Cart cart = cartService.getCartByUserId(userId);
         Product product = productService.getProductById(productId);
         cartService.deleteProductFromCart(cart.getId(), product);
+        if (cart.getProducts().isEmpty()) {
+            return "Cart is empty";
+        } else {
+            return "Product deleted from cart";
+        }
     }
 }
