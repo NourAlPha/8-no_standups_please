@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.exception.InvalidActionException;
+import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Product;
@@ -36,7 +37,7 @@ class CartServiceTest {
     void givenValidCart_whenAddCart_thenCartIsSaved() {
         // Given
         Cart cart = new Cart(UUID.randomUUID());
-        when(cartRepository.addCart(cart)).thenReturn(cart);
+        when(cartRepository.addObject(cart)).thenReturn(cart);
 
         // When
         Cart savedCart = cartService.addCart(cart);
@@ -44,7 +45,7 @@ class CartServiceTest {
         // Then
         assertNotNull(savedCart);
         assertEquals(cart, savedCart);
-        verify(cartRepository, times(1)).addCart(cart);
+        verify(cartRepository, times(1)).addObject(cart);
     }
 
     @Test
@@ -64,14 +65,13 @@ class CartServiceTest {
         Cart existingCart = new Cart(userId);
 
         // When
-        when(cartRepository.getCartByUserId(userId)).thenReturn(existingCart);
+        when(cartRepository.addObject(existingCart)).thenThrow(InvalidActionException.class);
 
         // Then
-        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> {
+        assertThrows(InvalidActionException.class, () -> {
             cartService.addCart(existingCart);
-        });
 
-        assertEquals("Invalid action: A cart already exists for user ID: " + userId, exception.getMessage());
+        });
 
         verify(cartRepository, never()).addCart(existingCart);
     }
@@ -83,7 +83,7 @@ class CartServiceTest {
         List<Cart> carts = new ArrayList<>();
         carts.add(new Cart(UUID.randomUUID()));
         carts.add(new Cart(UUID.randomUUID()));
-        when(cartRepository.getCarts()).thenReturn((ArrayList<Cart>) carts);
+        when(cartRepository.getObjects()).thenReturn((ArrayList<Cart>) carts);
 
         // When
         List<Cart> result = cartService.getCarts();
@@ -91,13 +91,13 @@ class CartServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(2, result.size());
-        verify(cartRepository, times(1)).getCarts();
+        verify(cartRepository, times(1)).getObjects();
     }
 
     @Test
     void givenNoCartsExist_whenGetAllCarts_thenReturnEmptyList() {
         // Given
-        when(cartRepository.getCarts()).thenReturn(new ArrayList<>());
+        when(cartRepository.getObjects()).thenReturn(new ArrayList<>());
 
         // When
         List<Cart> result = cartService.getCarts();
@@ -105,25 +105,26 @@ class CartServiceTest {
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(cartRepository, times(1)).getCarts();
+        verify(cartRepository, times(1)).getObjects();
     }
 
     @Test
-    void givenRepositoryReturnsNull_whenGetAllCarts_thenThrowsException() {
+    void givenRepositoryThrowsException_whenGetAllCarts_thenThrowsException() {
         // Given
-        when(cartRepository.getCarts()).thenReturn(null);
+        when(cartRepository.getObjects()).thenThrow(RuntimeException.class);
 
         // When & Then
-        assertThrows(ValidationException.class, () -> cartService.getCarts());
-        verify(cartRepository, times(1)).getCarts();
+        assertThrows(RuntimeException.class, () -> cartService.getCarts());
+        verify(cartRepository, times(1)).getObjects();
     }
 
     @Test
     void givenValidCartId_whenGetCartById_thenReturnCart() {
         // Given
-        UUID cartId = UUID.randomUUID();
-        Cart cart = new Cart(cartId);
-        when(cartRepository.getCartById(cartId)).thenReturn(cart);
+        UUID userId = UUID.randomUUID();
+        Cart cart = new Cart(userId);
+        UUID cartId = cart.getId();
+        when(cartRepository.getObjectById(cartId)).thenReturn(cart);
 
         // When
         Cart result = cartService.getCartById(cartId);
@@ -131,29 +132,29 @@ class CartServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(cart, result);
-        verify(cartRepository, times(1)).getCartById(cartId);
+        verify(cartRepository, times(1)).getObjectById(cartId);
     }
 
     @Test
     void givenInvalidCartId_whenGetCartById_thenThrowException() {
         // Given
         UUID invalidCartId = UUID.randomUUID();
-        when(cartRepository.getCartById(invalidCartId)).thenReturn(null);
+        when(cartRepository.getObjectById(invalidCartId)).thenThrow(NotFoundException.class);
 
         // When & Then
-        assertThrows(ValidationException.class, () -> cartService.getCartById(invalidCartId));
+        assertThrows(NotFoundException.class, () -> cartService.getCartById(invalidCartId));
 
     }
 
     @Test
-    void givenRepositoryReturnsNull_whenGetCartById_thenThrowsException() {
+    void givenRepositoryThrowsException_whenGetCartById_thenThrowsException() {
         // Given
         UUID cartId = UUID.randomUUID();
-        when(cartRepository.getCartById(cartId)).thenReturn(null);
+        when(cartRepository.getObjectById(cartId)).thenThrow(RuntimeException.class);
 
         // When & Then
-        assertThrows(ValidationException.class, () -> cartService.getCartById(cartId));
-        verify(cartRepository, times(1)).getCartById(cartId);
+        assertThrows(RuntimeException.class, () -> cartService.getCartById(cartId));
+        verify(cartRepository, times(1)).getObjectById(cartId);
     }
 
     @Test
@@ -163,14 +164,12 @@ class CartServiceTest {
         Product product = new Product("Product 1", 10.0);
         Cart cart = new Cart(cartId);
 
-        when(cartRepository.getCartById(cartId)).thenReturn(cart);
         doNothing().when(cartRepository).addProductToCart(cartId, product);
 
         // When
         cartService.addProductToCart(cartId, product);
 
         // Then
-        verify(cartRepository, times(1)).getCartById(cartId);
         verify(cartRepository, times(1)).addProductToCart(cartId, product);
     }
 
