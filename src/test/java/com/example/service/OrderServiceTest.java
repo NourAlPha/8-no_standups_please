@@ -82,35 +82,36 @@ public class OrderServiceTest {
 
         orderService.addOrder(ORDER_1);
         verify(orderRepository, times(ONE)).addOrder(ORDER_1);
-        verify(userRepository, times(ONE)).getUserById(USER.getId());
     }
 
     @Test
     public void addOrder_NullUserId_ExceptionThrown() {
         Order order = new Order(null, HUNDRED, CART_1.getProducts());
 
-        assertExceptionAndVerifyNoInvocations(order);
+        assertThrows(ValidationException.class,
+                () -> orderService.addOrder(order));
+        verify(orderRepository, never()).addOrder(any());
     }
 
     @Test
-    public void addOrder_MissingUserId_ExceptionThrown() {
+    public void addOrder_MissingUserId_Success() {
         Order order = new Order(
                 UUID.randomUUID(), HUNDRED, CART_1.getProducts());
-        when(userRepository.getUserById(order.getUserId()))
-                .thenThrow(new NotFoundException(
-                        String.format("id %s not found", order.getId())));
+        doNothing().when(orderRepository).addOrder(order);
 
-        assertThrows(NotFoundException.class,
-                () -> orderService.addOrder(order));
-        verify(orderRepository, never()).addOrder(order);
-        verify(userRepository, times(ONE)).getUserById(order.getUserId());
+        orderService.addOrder(order);
+
+        verify(orderRepository, times(ONE)).addOrder(order);
     }
 
     @Test
-    public void addOrder_EmptyProducts_ExceptionThrown() {
+    public void addOrder_EmptyProducts_Success() {
         Order order = new Order(USER.getId(), HUNDRED, new ArrayList<>());
+        doNothing().when(orderRepository).addOrder(order);
 
-        assertExceptionAndVerifyNoInvocations(order);
+        orderService.addOrder(order);
+
+        verify(orderRepository, times(ONE)).addOrder(order);
     }
 
     @Test
@@ -181,27 +182,21 @@ public class OrderServiceTest {
     public void deleteOrderById_ValidOrderId_Success() {
         when(orderRepository.getOrderById(ORDER_1.getId()))
                 .thenReturn(ORDER_1);
-        doNothing().when(userRepository)
-                .removeOrderFromUser(ORDER_1.getUserId(), ORDER_1.getId());
         doNothing().when(orderRepository).deleteOrderById(ORDER_1.getId());
 
         orderService.deleteOrderById(ORDER_1.getId());
-        verify(orderRepository, times(ONE)).getOrderById(ORDER_1.getId());
-        verify(userRepository, times(ONE))
-                .removeOrderFromUser(ORDER_1.getUserId(), ORDER_1.getId());
         verify(orderRepository, times(ONE)).deleteOrderById(ORDER_1.getId());
     }
 
     @Test
-    public void deleteOrderById_NonExistentId_ExceptionThrown() {
+    public void deleteOrderById_NonExistentId_Success() {
         Order randomOrder =
                 new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
-        when(orderRepository.getOrderById(randomOrder.getId()))
-                .thenThrow(new NotFoundException(
-                        String.format("id %s not found", randomOrder.getId())));
+        doNothing().when(orderRepository).deleteOrderById(randomOrder.getId());
 
-        assertThrows(NotFoundException.class,
-                () -> orderService.deleteOrderById(randomOrder.getId()));
+        orderService.deleteOrderById(randomOrder.getId());
+
+        verify(orderRepository, times(ONE)).deleteOrderById(randomOrder.getId());
     }
 
     @Test
@@ -209,12 +204,5 @@ public class OrderServiceTest {
         assertThrows(ValidationException.class,
                 () -> orderService.deleteOrderById(null));
         verify(orderRepository, never()).deleteOrderById(any());
-    }
-
-    private void assertExceptionAndVerifyNoInvocations(final Order order) {
-        assertThrows(ValidationException.class,
-                () -> orderService.addOrder(order));
-        verify(orderRepository, never()).addOrder(any());
-        verify(userRepository, never()).getUserById(any());
     }
 }

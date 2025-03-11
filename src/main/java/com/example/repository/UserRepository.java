@@ -41,7 +41,7 @@ public class UserRepository extends GenericRepository<User> {
     public void addOrderToUser(final UUID userId, final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
-        saveAll(getUsers());
+        overrideData(getObjectsArray());
     }
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
@@ -53,7 +53,7 @@ public class UserRepository extends GenericRepository<User> {
                 break;
             }
         }
-        overrideData(getUsers());
+        overrideData(getObjectsArray());
     }
 
     public void deleteUserById(final UUID userId) {

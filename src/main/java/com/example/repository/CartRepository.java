@@ -44,14 +44,14 @@ public class CartRepository extends GenericRepository<Cart> {
     public void addProductToCart(final UUID cartId, final Product product) {
         Cart cart = getCartById(cartId);
         cart.addProduct(product);
-        saveAll(getCarts());
+        saveAll(getObjectsArray());
     }
 
     public void deleteProductFromCart(final UUID cartId,
                                       final Product product) {
         Cart cart = getCartById(cartId);
         cart.removeProduct(product);
-        saveAll(getCarts());
+        saveAll(getObjectsArray());
     }
 
     public void deleteCartById(final UUID cartId) {
@@ -102,7 +102,7 @@ public class CartRepository extends GenericRepository<Cart> {
             totalPrice += product.getPrice();
         }
         cart.setProducts(new ArrayList<>());
-        saveAll(getCarts());
+        saveAll(getObjectsArray());
         return totalPrice;
     }
 
