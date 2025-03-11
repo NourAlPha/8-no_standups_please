@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.exception.NotFoundException;
+import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Order;
 import com.example.model.Product;
@@ -113,36 +115,41 @@ public class OrderServiceTest {
 
     @Test
     public void getOrderById_ValidOrderId_Success() {
-        when(orderRepository.getOrderById(ORDER_1.getId())).thenReturn(ORDER_1);
+        when(orderRepository.getObjectById(ORDER_1.getId()))
+                .thenReturn(ORDER_1);
 
         orderService.getOrderById(ORDER_1.getId());
-        verify(orderRepository, times(ONE)).getOrderById(ORDER_1.getId());
+        verify(orderRepository, times(ONE)).getObjectById(ORDER_1.getId());
     }
 
     @Test
     public void getOrderById_NullId_Success() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ValidationException.class,
                 () -> orderService.getOrderById(null));
-        verify(orderRepository, never()).getOrderById(any());
+        verify(orderRepository, never()).getObjectById(any());
     }
 
     @Test
     public void getOrderById_InvalidOrderId_ExceptionThrown() {
-        Order randomOrder = createNonExistentOrder();
+        Order randomOrder =
+                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
+        when(orderRepository.getObjectById(randomOrder.getId()))
+                .thenThrow(new NotFoundException(
+                        String.format("id %s not found", randomOrder.getId())));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> orderService.getOrderById(randomOrder.getId()));
-        verify(orderRepository, times(ONE)).getOrderById(randomOrder.getId());
+        verify(orderRepository, times(ONE)).getObjectById(randomOrder.getId());
     }
 
     @Test
     public void getOrders_EmptyOrders_Success() {
-        when(orderRepository.getOrders()).thenReturn(new ArrayList<>());
+        when(orderRepository.getObjects()).thenReturn(new ArrayList<>());
 
         List<Order> orders = orderService.getOrders();
 
         assertTrue(orders.isEmpty());
-        verify(orderRepository, times(ONE)).getOrders();
+        verify(orderRepository, times(ONE)).getObjects();
     }
 
     @Test
@@ -152,28 +159,28 @@ public class OrderServiceTest {
         orders.add(ORDER_2);
         orders.add(ORDER_3);
 
-        when(orderRepository.getOrders()).thenReturn(orders);
+        when(orderRepository.getObjects()).thenReturn(orders);
 
         List<Order> actualOrders = orderService.getOrders();
-        System.out.println(actualOrders);
 
         assertEquals(THREE, actualOrders.size());
-        verify(orderRepository, times(ONE)).getOrders();
+        verify(orderRepository, times(ONE)).getObjects();
     }
 
     @Test
     public void getOrders_RepositoryError_ExceptionThrown() {
-        when(orderRepository.getOrders())
-                .thenThrow(new IllegalArgumentException("Error"));
+        when(orderRepository.getObjects())
+                .thenThrow(new RuntimeException("Error"));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(RuntimeException.class,
                 () -> orderService.getOrders());
-        verify(orderRepository, times(ONE)).getOrders();
+        verify(orderRepository, times(ONE)).getObjects();
     }
 
     @Test
     public void deleteOrderById_ValidOrderId_Success() {
-        when(orderRepository.getOrderById(ORDER_1.getId())).thenReturn(ORDER_1);
+        when(orderRepository.getOrderById(ORDER_1.getId()))
+                .thenReturn(ORDER_1);
         doNothing().when(userRepository)
                 .removeOrderFromUser(ORDER_1.getUserId(), ORDER_1.getId());
         doNothing().when(orderRepository).deleteOrderById(ORDER_1.getId());
@@ -187,26 +194,21 @@ public class OrderServiceTest {
 
     @Test
     public void deleteOrderById_NonExistentId_ExceptionThrown() {
-        Order randomOrder = createNonExistentOrder();
+        Order randomOrder =
+                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
+        when(orderRepository.getOrderById(randomOrder.getId()))
+                .thenThrow(new NotFoundException(
+                        String.format("id %s not found", randomOrder.getId())));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> orderService.deleteOrderById(randomOrder.getId()));
     }
 
     @Test
     public void deleteOrderById_NullId_ExceptionThrown() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ValidationException.class,
                 () -> orderService.deleteOrderById(null));
         verify(orderRepository, never()).deleteOrderById(any());
-    }
-
-    private Order createNonExistentOrder() {
-        Order randomOrder =
-                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
-        when(orderRepository.getOrderById(randomOrder.getId()))
-                .thenThrow(new IllegalArgumentException(
-                        String.format("id %s not found", randomOrder.getId())));
-        return randomOrder;
     }
 
     private void assertExceptionAndVerifyNoInvocations(final Order order) {
