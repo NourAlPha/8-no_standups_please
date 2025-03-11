@@ -20,6 +20,8 @@ public class ProductService extends MainService<Product> {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
 
+    private static final double FULL_PERCENTAGE = 100.0;
+
     @Autowired
     public ProductService(final ProductRepository productRepository,
                           final CartRepository cartRepository,
@@ -38,11 +40,20 @@ public class ProductService extends MainService<Product> {
     }
 
     public Product getProductById(final UUID productId) {
-        return productRepository.getProductById(productId);
+        if (productRepository.getProductById(productId) != null) {
+            return productRepository.getProductById(productId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Product not found");
+        }
     }
 
     public Product updateProduct(final UUID productId, final String newName,
                                  final double newPrice) {
+        if (newPrice < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Enter a valid price");
+        }
         Product updatedProduct = productRepository.updateProduct(productId,
                 newName, newPrice);
 
@@ -54,6 +65,11 @@ public class ProductService extends MainService<Product> {
 
     public void applyDiscount(final double discount,
                               final ArrayList<UUID> productIds) {
+        if (discount < 0 || discount > FULL_PERCENTAGE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Enter a valid discount percentage");
+        }
+
         productRepository.applyDiscount(discount, productIds);
 
         // After applying the discount, update all carts that contain
