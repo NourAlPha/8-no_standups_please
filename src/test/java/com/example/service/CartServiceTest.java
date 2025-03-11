@@ -158,6 +158,43 @@ class CartServiceTest {
     }
 
     @Test
+    void givenValidUserId_whenGetCartByUserId_thenReturnCart() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        Cart cart = new Cart(userId);
+        when(cartRepository.getCartByUserId(userId)).thenReturn(cart);
+
+        // When
+        Cart result = cartService.getCartByUserId(userId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(cart, result);
+        verify(cartRepository, times(1)).getCartByUserId(userId);
+    }
+
+    @Test
+    void givenInvalidUserId_whenGetCartByUserId_thenThrowException() {
+        // Given
+        UUID invalidUserId = UUID.randomUUID();
+        when(cartRepository.getCartByUserId(invalidUserId)).thenThrow(NotFoundException.class);
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> cartService.getCartByUserId(invalidUserId));
+    }
+
+    @Test
+    void givenRepositoryThrowsException_whenGetCartByUserId_thenThrowsException() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        when(cartRepository.getCartByUserId(userId)).thenThrow(RuntimeException.class);
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> cartService.getCartByUserId(userId));
+        verify(cartRepository, times(1)).getCartByUserId(userId);
+    }
+
+    @Test
     void givenValidCartIdAndProduct_whenAddProductToCart_thenProductIsAdded() {
         // Given
         UUID cartId = UUID.randomUUID();
@@ -193,5 +230,74 @@ class CartServiceTest {
         // When & Then
         assertThrows(ValidationException.class, () -> cartService.addProductToCart(cartId, product));
         verify(cartRepository, never()).addProductToCart(any(), any());
+    }
+
+    @Test
+    void givedValidCartIdAndProduct_whenDeleteProductFromCart_thenProductIsRemoved() {
+        // Given
+        UUID cartId = UUID.randomUUID();
+        Product product = new Product("Product 1", 10.0);
+        doNothing().when(cartRepository).deleteProductFromCart(cartId, product);
+
+        // When
+        cartService.deleteProductFromCart(cartId, product);
+
+        // Then
+        verify(cartRepository, times(1)).deleteProductFromCart(cartId, product);
+    }
+
+    @Test
+    void givenInvalidCartId_whenDeleteProductFromCart_thenThrowException() {
+        // Given
+        UUID invalidCartId = UUID.randomUUID();
+        Product product = new Product("Product 1", 10.0);
+        doThrow(new ValidationException("Cart not found")).when(cartRepository).deleteProductFromCart(invalidCartId, product);
+
+        // When & Then
+        assertThrows(ValidationException.class, () -> cartService.deleteProductFromCart(invalidCartId, product));
+    }
+
+    @Test
+    void givenNullProduct_whenDeleteProductFromCart_thenThrowException() {
+        // Given
+        UUID cartId = UUID.randomUUID();
+        Product product = null;
+
+        // When & Then
+        assertThrows(ValidationException.class, () -> cartService.deleteProductFromCart(cartId, product));
+        verify(cartRepository, never()).deleteProductFromCart(any(), any());
+    }
+
+    @Test
+    void givenValidCartId_whenDeleteCartById_thenCartIsDeleted() {
+        // Given
+        UUID cartId = UUID.randomUUID();
+        doNothing().when(cartRepository).deleteObjectById(cartId);
+
+        // When
+        cartService.deleteCartById(cartId);
+
+        // Then
+        verify(cartRepository, times(1)).deleteObjectById(cartId);
+    }
+
+    @Test
+    void givenInvalidCartId_whenDeleteCartById_thenThrowException() {
+        // Given
+        UUID invalidCartId = UUID.randomUUID();
+        doThrow(new NotFoundException("Cart not found")).when(cartRepository).deleteObjectById(invalidCartId);
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> cartService.deleteCartById(invalidCartId));
+    }
+
+    @Test
+    void givenNullCartId_whenDeleteCartById_thenThrowException() {
+        // Given
+        UUID cartId = null;
+
+        // When & Then
+        assertThrows(ValidationException.class, () -> cartService.deleteCartById(cartId));
+        verify(cartRepository, never()).deleteCartById(any());
     }
 }
