@@ -45,6 +45,10 @@ public class ProductService extends MainService<Product, ProductRepository> {
 
     public Product updateProduct(final UUID productId, final String newName,
                                  final double newPrice) {
+        if (newPrice < 0) {
+            throw new InvalidActionException("Price cannot be negative");
+        }
+
         Product updatedProduct = productRepository.updateProduct(productId,
                 newName, newPrice);
 
