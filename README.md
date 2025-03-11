@@ -22,7 +22,7 @@ The project leverages modern development tools and practices, including:
 - **JUnit** for testing  
 - **Checkstyle** and **jscpd** for code quality  
 - **Docker** for containerization  
-- **CI/CD** pipelines for automated deployment 
+- **CI/CD** pipelines for automated deployment
 
 ## Features
 
