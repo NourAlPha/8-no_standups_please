@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
@@ -54,10 +55,10 @@ public class ProductServiceTest {
     void givenNonExistentProductId_whenDeleteProductById_thenThrowNotFound() {
         // Given
         UUID productId = UUID.randomUUID();
-        when(productRepository.getProductById(productId)).thenReturn(null);
+        when(productRepository.getProductById(productId)).thenThrow(NotFoundException.class);
 
         // When & Then
-        assertThrows(ValidationException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             productService.deleteProductById(productId);
         });
 
