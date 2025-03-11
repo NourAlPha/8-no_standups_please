@@ -66,7 +66,7 @@ public class ProductController {
                                 @RequestBody final ArrayList<UUID>
                                         productIds) {
         productService.applyDiscount(discount, productIds);
-        return "Discount Applied";
+        return "Discount applied successfully";
     }
 }
 

@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Order;
 import com.example.repository.OrderRepository;
@@ -32,16 +31,7 @@ public class OrderService extends MainService<Order, OrderRepository> {
         if (order.getUserId() == null) {
             throw new ValidationException("User ID is required");
         }
-        if (order.getProducts() == null || order.getProducts().isEmpty()) {
-            throw new ValidationException("Products are required");
-        }
-        try {
-            // Checking if the user exists.
-            userRepository.getUserById(order.getUserId());
-            orderRepository.addOrder(order);
-        } catch (NotFoundException e) {
-            throw new NotFoundException(e.getMessage());
-        }
+        orderRepository.addOrder(order);
     }
 
     public ArrayList<Order> getOrders() {
@@ -54,9 +44,9 @@ public class OrderService extends MainService<Order, OrderRepository> {
 
     public void deleteOrderById(final UUID orderId) {
         checkId(orderId);
-        // Removing the order from the user (mimicking referencing).
-        Order order = orderRepository.getOrderById(orderId);
-        userRepository.removeOrderFromUser(order.getUserId(), orderId);
+//        // Removing the order from the user (mimicking referencing).
+//        Order order = orderRepository.getOrderById(orderId);
+//        userRepository.removeOrderFromUser(order.getUserId(), orderId);
 
         orderRepository.deleteOrderById(orderId);
     }

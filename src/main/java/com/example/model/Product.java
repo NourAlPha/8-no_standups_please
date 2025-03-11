@@ -20,6 +20,12 @@ public class Product implements Identifiable {
         this.price = price;
     }
 
+    public Product(final UUID id, final String name, final double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
     public UUID getId() {
         return id;
     }

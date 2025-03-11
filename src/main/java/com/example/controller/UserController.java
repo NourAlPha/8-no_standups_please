@@ -100,7 +100,7 @@ public class UserController {
     )
     public String emptyCart(@PathVariable final UUID userId) {
         userService.emptyCart(userId);
-        return "Cart has been emptied";
+        return "Cart emptied successfully";
     }
 
     @PutMapping("/addProductToCart")

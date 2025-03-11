@@ -22,6 +22,13 @@ public class Cart implements Identifiable {
         this.userId = userId;
     }
 
+    public Cart(final UUID id, final UUID userId,
+                final List<Product> products) {
+        this.id = id;
+        this.userId = userId;
+        this.products = products;
+    }
+
     public UUID getId() {
         return id;
     }
