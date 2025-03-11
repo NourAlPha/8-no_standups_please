@@ -19,6 +19,7 @@ public class ProductService extends MainService<Product> {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
+    private static final double FULL_PERCENTAGE = 100.0;
 
     @Autowired
     public ProductService(final ProductRepository productRepository,
@@ -60,6 +61,11 @@ public class ProductService extends MainService<Product> {
 
     public void applyDiscount(final double discount,
                               final ArrayList<UUID> productIds) {
+        if (discount < 0 || discount > FULL_PERCENTAGE) {
+            throw new InvalidActionException(
+                    "Discount must be between 0 and 100");
+        }
+
         productRepository.applyDiscount(discount, productIds);
 
         // After applying the discount, update all carts that contain

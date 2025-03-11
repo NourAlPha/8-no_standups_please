@@ -1,6 +1,5 @@
 package com.example.repository;
 
-import com.example.exception.InvalidActionException;
 import com.example.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -47,11 +46,6 @@ public class ProductRepository extends GenericRepository<Product> {
                               final ArrayList<UUID> productIds) {
         if (productIds.isEmpty()) {
             return;
-        }
-
-        if (discount < 0 || discount > FULL_PERCENTAGE) {
-            throw new InvalidActionException(
-                    "Discount must be between 0 and 100");
         }
 
         for (UUID productId : productIds) {
