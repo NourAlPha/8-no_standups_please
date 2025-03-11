@@ -2,21 +2,25 @@ package com.example.repository;
 
 import com.example.exception.NotFoundException;
 import com.example.model.Identifiable;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+@Primary
+@Repository
 public abstract class GenericRepository<T extends Identifiable>
         extends MainRepository<T> {
 
     private ArrayList<T> objects;
 
-    protected ArrayList<T> getObjects() {
+    public ArrayList<T> getObjects() {
         initializeObjects();
         return objects;
     }
 
-    protected T addObject(final T object) {
+    public T addObject(final T object) {
         if (objects != null) {
             objects.add(object);
         }
@@ -24,7 +28,7 @@ public abstract class GenericRepository<T extends Identifiable>
         return object;
     }
 
-    protected T getObjectById(final UUID id) {
+    public T getObjectById(final UUID id) {
         initializeObjects();
         for (T object : objects) {
             if (object.getId().equals(id)) {
@@ -35,7 +39,7 @@ public abstract class GenericRepository<T extends Identifiable>
         throw new NotFoundException(String.format("id %s not found", id));
     }
 
-    protected void deleteObjectById(final UUID id) {
+    public void deleteObjectById(final UUID id) {
         T object = getObjectById(id);
         objects.remove(object);
         overrideData(objects);
