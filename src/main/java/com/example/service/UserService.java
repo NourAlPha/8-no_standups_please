@@ -1,7 +1,6 @@
 package com.example.service;
 
 import com.example.exception.InvalidActionException;
-import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Order;
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @SuppressWarnings("checkstyle:GenericWhitespace")
-public class UserService extends MainService<User> {
+public class UserService extends MainService<User, UserRepository> {
     private final UserRepository userRepository;
     private final CartService cartService;
     private final ProductService productService;
@@ -28,6 +27,7 @@ public class UserService extends MainService<User> {
                        final CartService cartService,
                        final ProductService productService,
                        final OrderService orderService) {
+        super(userRepository);
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.productService = productService;
@@ -48,14 +48,11 @@ public class UserService extends MainService<User> {
     }
 
     public ArrayList<User> getUsers() {
-        return userRepository.getUsers();
+        return getObjects();
     }
 
     public User getUserById(final UUID userId) {
-        if (userId == null) {
-            throw new ValidationException("id cannot be null");
-        }
-        return userRepository.getUserById(userId);
+        return getObjectById(userId);
     }
 
     public List<Order> getOrdersByUserId(final UUID userId) {
@@ -75,20 +72,7 @@ public class UserService extends MainService<User> {
     }
 
     public void deleteUserById(final UUID userId) {
-        try {
-            if (userId == null) {
-                throw new ValidationException("id cannot be null");
-            }
-            userRepository.deleteUserById(userId);
-        } catch (ValidationException e) {
-            throw new ValidationException("User ID cannot be null");
-        } catch (NotFoundException e) {
-            throw new NotFoundException("User not found with ID: " + userId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete user with ID: "
-                    + userId, e);
-        }
-
+        deleteObjectById(userId);
     }
 
     public void addOrderToUser(final UUID userId) {

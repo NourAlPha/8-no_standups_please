@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Service
 @SuppressWarnings("rawtypes")
-public class OrderService extends MainService<Order> {
+public class OrderService extends MainService<Order, OrderRepository> {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -20,26 +20,21 @@ public class OrderService extends MainService<Order> {
     @Autowired
     public OrderService(final OrderRepository orderRepository,
                         final UserRepository userRepository) {
+        super(orderRepository);
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
     }
 
     public void addOrder(final Order order) {
-        if (order.getId() == null) {
-            throw new ValidationException("Order id cannot be null");
-        }
-        orderRepository.addOrder(order);
+        addObject(order);
     }
 
     public ArrayList<Order> getOrders() {
-        return orderRepository.getOrders();
+        return getObjects();
     }
 
     public Order getOrderById(final UUID orderId) {
-        if (orderId == null) {
-            throw new ValidationException("id cannot be null");
-        }
-        return orderRepository.getOrderById(orderId);
+        return getObjectById(orderId);
     }
 
     public void deleteOrderById(final UUID orderId) {
