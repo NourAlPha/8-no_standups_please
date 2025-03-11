@@ -78,7 +78,7 @@ public class OrderControllerTest {
 
     @Test
     public void addOrder_ValidOrder_Returns200() throws Exception {
-        addOrderExpectOk(ORDER_1);
+        addOrderToUserExpectOk(CART_3);
     }
 
     @Test
@@ -109,19 +109,19 @@ public class OrderControllerTest {
 
     @Test
     public void getOrderById_ValidId_ReturnsOrder200() throws Exception {
-        addOrderExpectOk(ORDER_1);
+        OrderDTO orderDTO = addOrderToUserExpectOk(CART_1);
 
-        getOrderExpectSameId(ORDER_1);
+        getOrderExpectSameId(orderDTO);
     }
 
     @Test
     public void getOrderById_ValidIdAmongIds_ReturnsOrder200()
             throws Exception {
-        addOrderExpectOk(ORDER_1);
-        addOrderExpectOk(ORDER_2);
-        addOrderExpectOk(ORDER_3);
+        addOrderToUserExpectOk(CART_1);
+        OrderDTO orderDTO = addOrderToUserExpectOk(CART_2);
+        addOrderToUserExpectOk(CART_3);
 
-        getOrderExpectSameId(ORDER_2);
+        getOrderExpectSameId(orderDTO);
     }
 
     @Test
@@ -138,9 +138,9 @@ public class OrderControllerTest {
 
     @Test
     public void getOrders_Orders_ReturnsOrders200() throws Exception {
-        addOrderExpectOk(ORDER_1);
-        addOrderExpectOk(ORDER_2);
-        addOrderExpectOk(ORDER_3);
+        addOrderToUserExpectOk(CART_1);
+        addOrderToUserExpectOk(CART_2);
+        addOrderToUserExpectOk(CART_3);
 
         getOrdersExpectLength(THREE);
     }
@@ -150,13 +150,13 @@ public class OrderControllerTest {
             throws Exception {
         getOrdersExpectLength(ZERO);
 
-        addOrderExpectOk(ORDER_1);
+        addOrderToUserExpectOk(CART_1);
         getOrdersExpectLength(ONE);
 
-        addOrderExpectOk(ORDER_2);
+        addOrderToUserExpectOk(CART_2);
         getOrdersExpectLength(TWO);
 
-        addOrderExpectOk(ORDER_3);
+        addOrderToUserExpectOk(CART_3);
         getOrdersExpectLength(THREE);
     }
 
