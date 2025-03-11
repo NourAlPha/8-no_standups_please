@@ -1,14 +1,13 @@
 package com.example.repository;
 
+import com.example.exception.NotFoundException;
 import com.example.model.Identifiable;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class GenericRepository<T extends Identifiable>
-                                                    extends MainRepository<T> {
+        extends MainRepository<T> {
 
     private ArrayList<T> objects;
 
@@ -21,7 +20,6 @@ public abstract class GenericRepository<T extends Identifiable>
         if (objects != null) {
             objects.add(object);
         }
-
         save(object);
         return object;
     }
@@ -34,8 +32,7 @@ public abstract class GenericRepository<T extends Identifiable>
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("id %s not found", id));
+        throw new NotFoundException(String.format("id %s not found", id));
     }
 
     protected void deleteObjectById(final UUID id) {

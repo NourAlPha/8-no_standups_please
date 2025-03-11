@@ -1,5 +1,8 @@
 package com.example.MiniProject1;
 
+import com.example.exception.InvalidActionException;
+import com.example.exception.NotFoundException;
+import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Order;
 import com.example.model.Product;
@@ -73,7 +76,10 @@ class UsersServiceTests {
 
     @Test
     void addUser_ShouldThrowExceptionForNullUser() {
-        assertThrows(IllegalArgumentException.class,
+        when(userRepository.addUser(mockUser)).thenThrow(
+                new ValidationException("Object id cannot be null"));
+
+        assertThrows(ValidationException.class,
                 () -> userService.addUser(null));
         verify(userRepository, never()).addUser(any());
     }
@@ -82,10 +88,11 @@ class UsersServiceTests {
     void addUser_ShouldThrowExceptionForEmptyName() {
         User invalidUser = new User("");
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ValidationException.class,
                 () -> userService.addUser(invalidUser));
         verify(userRepository, never()).addUser(any());
     }
+
     @Test
     void getUsers_ShouldReturnListOfUsers() {
         List<User> users = List.of(mockUser);
@@ -135,9 +142,11 @@ class UsersServiceTests {
 
     @Test
     void getUserById_ShouldThrowExceptionForNonExistentUser() {
-        when(userRepository.getUserById(mockUser.getId())).thenReturn(null);
+        when(userRepository.getUserById(mockUser.getId()))
+                .thenThrow(new NotFoundException(
+                        String.format("id %s not found", mockUser.getId())));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> userService.getUserById(mockUser.getId()));
         verify(userRepository, times(1)).
                 getUserById(mockUser.getId());
@@ -145,7 +154,10 @@ class UsersServiceTests {
 
     @Test
     void getUserById_ShouldHandleInvalidUUID() {
-        assertThrows(IllegalArgumentException.class,
+        when(userRepository.getUserById(null))
+                .thenThrow(new ValidationException("id cannot be null"));
+
+        assertThrows(ValidationException.class,
                 () -> userService.getUserById(null));
         verify(userRepository, never()).getUserById(any());
     }
@@ -172,9 +184,11 @@ class UsersServiceTests {
 
     @Test
     void addOrderToUser_ShouldThrowExceptionForNonExistentUser() {
-        when(userRepository.getUserById(mockUser.getId())).thenReturn(null);
+        when(userRepository.getUserById(mockUser.getId()))
+                .thenThrow(new NotFoundException(
+                        String.format("id %s not found", mockUser.getId())));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> userService.addOrderToUser(mockUser.getId()));
         verify(cartService, never()).getCartByUserId(any());
     }
@@ -193,7 +207,7 @@ class UsersServiceTests {
         when(mockCart.getProducts()).thenReturn(List.of());
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidActionException.class,
                 () -> userService.addOrderToUser(mockUser.getId()));
         verify(orderService, never()).addOrder(any());
     }
@@ -224,7 +238,10 @@ class UsersServiceTests {
 
     @Test
     void deleteUserById_ShouldHandleInvalidUUID() {
-        assertThrows(IllegalArgumentException.class,
+        doThrow(new ValidationException("User ID cannot be null"))
+                .when(userRepository).deleteUserById(null);
+
+        assertThrows(ValidationException.class,
                 () -> userService.deleteUserById(null));
         verify(userRepository, never())
                 .deleteUserById(any());
