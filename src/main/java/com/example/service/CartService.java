@@ -51,11 +51,14 @@ public class CartService extends MainService<Cart, CartRepository> {
 
     public void deleteProductFromCart(final UUID cartId,
                                       final Product product) {
+        if (product == null) {
+            throw new ValidationException("product cannot be null");
+        }
         cartRepository.deleteProductFromCart(cartId, product);
     }
 
-    public double emptyCart(final UUID cartId) {
-        return cartRepository.emptyCart(cartId);
+    public double emptyCart(final UUID userId) {
+        return cartRepository.emptyCart(userId);
     }
 }
 

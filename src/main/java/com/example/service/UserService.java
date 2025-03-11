@@ -62,6 +62,8 @@ public class UserService extends MainService<User, UserRepository> {
 
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
+        checkId(userId);
+        checkId(orderId);
         userRepository.removeOrderFromUser(userId, orderId);
     }
 
@@ -70,7 +72,8 @@ public class UserService extends MainService<User, UserRepository> {
     }
 
     public void addOrderToUser(final UUID userId) {
-        User user = getUserById(userId);
+        checkId(userId);
+        getUserById(userId);
         Cart cart = cartService.getCartByUserId(userId);
         List<Product> products = cart.getProducts();
         if (products.isEmpty()) {
@@ -79,12 +82,13 @@ public class UserService extends MainService<User, UserRepository> {
         }
         double totalPrice = cartService.emptyCart(userId);
         Order order = new Order(userId, totalPrice, products);
-        user.addOrder(order);
-        userRepository.saveAll(userRepository.getObjectsArray());
+        userRepository.addOrderToUser(userId, order);
         orderService.addOrder(order);
     }
 
     public void emptyCart(final UUID userId) {
+        checkId(userId);
+        userRepository.getUserById(userId);
         cartService.emptyCart(userId);
     }
 
