@@ -38,6 +38,9 @@ public class UserService extends MainService<User> {
         if (user == null) {
             throw new ValidationException("User cannot be null");
         }
+        if (user.getId() == null) {
+            throw new ValidationException("User id cannot be null");
+        }
         if (user.getName().trim().isEmpty()) {
             throw new ValidationException("User name cannot be empty");
         }
@@ -49,6 +52,9 @@ public class UserService extends MainService<User> {
     }
 
     public User getUserById(final UUID userId) {
+        if (userId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         return userRepository.getUserById(userId);
     }
 
@@ -70,6 +76,9 @@ public class UserService extends MainService<User> {
 
     public void deleteUserById(final UUID userId) {
         try {
+            if (userId == null) {
+                throw new ValidationException("id cannot be null");
+            }
             userRepository.deleteUserById(userId);
         } catch (ValidationException e) {
             throw new ValidationException("User ID cannot be null");

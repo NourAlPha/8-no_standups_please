@@ -159,7 +159,7 @@ class UsersServiceTests {
 
         assertThrows(ValidationException.class,
                 () -> userService.getUserById(null));
-        verify(userRepository, times(1)).getUserById(null);
+        verify(userRepository, never()).getUserById(any());
     }
 
     @Test
@@ -243,7 +243,7 @@ class UsersServiceTests {
 
         assertThrows(ValidationException.class,
                 () -> userService.deleteUserById(null));
-        verify(userRepository, times(1))
-                .deleteUserById(null);
+        verify(userRepository, never())
+                .deleteUserById(any());
     }
 }

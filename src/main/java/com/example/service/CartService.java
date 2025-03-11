@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
@@ -20,6 +21,9 @@ public class CartService {
     }
 
     public Cart addCart(final Cart cart) {
+        if (cart.getId() == null) {
+            throw new ValidationException("Cart id cannot be null");
+        }
         return cartRepository.addCart(cart);
     }
 
@@ -28,6 +32,9 @@ public class CartService {
     }
 
     public Cart getCartById(final UUID cartId) {
+        if (cartId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         return cartRepository.getCartById(cartId);
     }
 

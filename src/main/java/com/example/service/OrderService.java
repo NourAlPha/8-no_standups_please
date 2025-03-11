@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ValidationException;
 import com.example.model.Order;
 import com.example.repository.OrderRepository;
 import com.example.repository.UserRepository;
@@ -24,6 +25,9 @@ public class OrderService extends MainService<Order> {
     }
 
     public void addOrder(final Order order) {
+        if (order.getId() == null) {
+            throw new ValidationException("Order id cannot be null");
+        }
         orderRepository.addOrder(order);
     }
 
@@ -32,10 +36,16 @@ public class OrderService extends MainService<Order> {
     }
 
     public Order getOrderById(final UUID orderId) {
+        if (orderId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         return orderRepository.getOrderById(orderId);
     }
 
     public void deleteOrderById(final UUID orderId) {
+        if (orderId == null) {
+            throw new ValidationException("id cannot be null");
+        }
         // Removing the order from the user (mimicking referencing).
         Order order = orderRepository.getOrderById(orderId);
         userRepository.removeOrderFromUser(order.getUserId(), orderId);
