@@ -1,6 +1,7 @@
 package com.example.service;
 
 
+import com.example.exception.InvalidActionException;
 import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Identifiable;
@@ -23,6 +24,9 @@ public abstract class MainService<T extends Identifiable,
         checkId(object.getId());
         try {
             return repository.addObject(object);
+        } catch (InvalidActionException e) {
+            throw new InvalidActionException("Object "
+                    + object.getId() + " already exists");
         } catch (RuntimeException e) {
             throw new RuntimeException("Failed to add object", e);
         }

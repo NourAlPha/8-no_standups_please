@@ -39,6 +39,8 @@
 
         <property name="basedir" value="${basedir}"/>
     -->
+
+
     <property name="severity" value="error"/>
 
     <property name="fileExtensions" value="java, properties, xml"/>
@@ -48,6 +50,12 @@
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern" value="module\-info\.java$"/>
     </module>
+
+    <!-- Excludes all test files (e.g., in src/test or ending with Test.java) -->
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern" value="[/\\]src[/\\]test[/\\].*|.*Test\.java"/>
+    </module>
+
 
     <!-- https://checkstyle.org/filters/suppressionfilter.html -->
     <module name="SuppressionFilter">
