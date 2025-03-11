@@ -1,10 +1,9 @@
-package com.example.MiniProject1;
+package com.example.service;
 
 import com.example.model.Product;
 import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
-import com.example.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class ProductTests {
+public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;

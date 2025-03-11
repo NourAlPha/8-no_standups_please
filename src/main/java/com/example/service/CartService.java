@@ -29,7 +29,8 @@ public class CartService {
 
         Cart existingCart = cartRepository.getCartByUserId(cart.getUserId());
         if (existingCart != null) {
-            throw new IllegalStateException("A cart already exists for user ID: " + cart.getUserId());
+            throw new IllegalStateException(
+                    "A cart already exists for user ID: " + cart.getUserId());
         }
         return cartRepository.addCart(cart);
     }
@@ -48,7 +49,8 @@ public class CartService {
         }
         Cart cart = cartRepository.getCartById(cartId);
         if (cart == null) {
-            throw new IllegalStateException("Cart not found with ID: " + cartId);
+            throw new IllegalStateException(
+                    "Cart not found with ID: " + cartId);
         }
         return cart;
     }
@@ -59,7 +61,8 @@ public class CartService {
         }
         Cart cart = cartRepository.getCartByUserId(userId);
         if (cart == null) {
-            throw new IllegalStateException("No cart found for user ID: " + userId);
+            throw new IllegalStateException(
+                    "No cart found for user ID: " + userId);
         }
         return cart;
     }
@@ -76,7 +79,8 @@ public class CartService {
         }
         Cart cart = cartRepository.getCartById(cartId);
         if (cart == null) {
-            throw new IllegalStateException("Cart not found with ID: " + cartId);
+            throw new IllegalStateException(
+                    "Cart not found with ID: " + cartId);
         }
         cartRepository.addProductToCart(cartId, product);
     }

@@ -1,9 +1,8 @@
-package com.example.MiniProject1;
+package com.example.service;
 
 import com.example.model.Cart;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
-import com.example.service.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,7 +16,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CartTests {
+class CartServiceTest {
 
     @Mock
     private CartRepository cartRepository;

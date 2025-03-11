@@ -67,16 +67,19 @@ public class ProductService extends MainService<Product> {
 
     public void deleteProductById(final UUID productId) {
         if (productId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product ID cannot be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Product ID cannot be null");
         }
 
         Product product = productRepository.getProductById(productId);
         if (product == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with ID: " + productId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Product not found with ID: " + productId);
         }
 
         if (orderRepository.isProductInOrder(productId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product is in active orders");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Product is in active orders");
         }
 
         cartRepository.removeProductFromAllCarts(productId);
