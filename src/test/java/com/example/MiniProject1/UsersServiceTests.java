@@ -96,40 +96,41 @@ class UsersServiceTests {
     @Test
     void getUsers_ShouldReturnListOfUsers() {
         List<User> users = List.of(mockUser);
-        when(userRepository.getUsers()).thenReturn(new ArrayList<>(users));
+        when(userRepository.getObjects()).thenReturn(new ArrayList<>(users));
 
         List<User> result = userService.getUsers();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(users, result);
-        verify(userRepository, times(1)).getUsers();
+        verify(userRepository, times(1)).getObjects();
     }
 
     @Test
     void getUsers_ShouldReturnEmptyListWhenNoUsersExist() {
-        when(userRepository.getUsers()).thenReturn(new ArrayList<>());
+        when(userRepository.getObjects()).thenReturn(new ArrayList<>());
 
         List<User> result = userService.getUsers();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(userRepository, times(1)).getUsers();
+        verify(userRepository, times(1)).getObjects();
     }
 
     @Test
     void getUsers_ShouldHandleRepositoryError() {
-        when(userRepository.getUsers()).
+        when(userRepository.getObjects()).
                 thenThrow(new RuntimeException("Database error"));
 
         assertThrows(RuntimeException.class, () -> userService.getUsers());
         verify(userRepository,
-                times(1)).getUsers();
+                times(1)).getObjects();
     }
 
     @Test
     void getUserById_ShouldReturnUserWhenExists() {
-        when(userRepository.getUserById(mockUser.getId())).thenReturn(mockUser);
+        when(userRepository.getObjectById(mockUser.getId()))
+                .thenReturn(mockUser);
 
         User result = userService.getUserById(mockUser.getId());
 
@@ -137,35 +138,36 @@ class UsersServiceTests {
         assertNotNull(result);
         assertEquals(mockUser, result);
         verify(userRepository, times(1))
-                .getUserById(mockUser.getId());
+                .getObjectById(mockUser.getId());
     }
 
     @Test
     void getUserById_ShouldThrowExceptionForNonExistentUser() {
-        when(userRepository.getUserById(mockUser.getId()))
+        when(userRepository.getObjectById(mockUser.getId()))
                 .thenThrow(new NotFoundException(
                         String.format("id %s not found", mockUser.getId())));
 
         assertThrows(NotFoundException.class,
                 () -> userService.getUserById(mockUser.getId()));
         verify(userRepository, times(1)).
-                getUserById(mockUser.getId());
+                getObjectById(mockUser.getId());
     }
 
     @Test
     void getUserById_ShouldHandleInvalidUUID() {
-        when(userRepository.getUserById(null))
+        when(userRepository.getObjectById(null))
                 .thenThrow(new ValidationException("id cannot be null"));
 
         assertThrows(ValidationException.class,
                 () -> userService.getUserById(null));
-        verify(userRepository, never()).getUserById(any());
+        verify(userRepository, never()).getObjectById(any());
     }
 
     @Test
     void addOrderToUser_ShouldAddOrderSuccessfully() {
         // Arrange
-        when(userRepository.getUserById(mockUser.getId())).thenReturn(mockUser);
+        when(userRepository.getObjectById(mockUser.getId()))
+                .thenReturn(mockUser);
         when(cartService.getCartByUserId(mockUser.getId()))
                 .thenReturn(mockCart);
         final double productPrice = 1000.0;
@@ -174,7 +176,7 @@ class UsersServiceTests {
 
         ArrayList<User> mockUsers = new ArrayList<>();
         mockUsers.add(mockUser);
-        when(userRepository.getUsers()).thenReturn(mockUsers);
+        when(userRepository.getObjects()).thenReturn(mockUsers);
 
         userService.addOrderToUser(mockUser.getId());
 
@@ -184,7 +186,7 @@ class UsersServiceTests {
 
     @Test
     void addOrderToUser_ShouldThrowExceptionForNonExistentUser() {
-        when(userRepository.getUserById(mockUser.getId()))
+        when(userRepository.getObjectById(mockUser.getId()))
                 .thenThrow(new NotFoundException(
                         String.format("id %s not found", mockUser.getId())));
 
@@ -196,7 +198,7 @@ class UsersServiceTests {
     @Test
     void addOrderToUser_ShouldHandleEmptyCart() {
         // Arrange
-        when(userRepository.getUserById(mockUser.getId()))
+        when(userRepository.getObjectById(mockUser.getId()))
                 .thenReturn(mockUser);
         when(cartService.getCartByUserId(mockUser.getId()))
                 .thenReturn(mockCart);
@@ -218,7 +220,7 @@ class UsersServiceTests {
         userService.deleteUserById(mockUser.getId());
 
         verify(userRepository, times(1))
-                .deleteUserById(mockUser.getId());
+                .deleteObjectById(mockUser.getId());
     }
 
     @Test
@@ -227,23 +229,23 @@ class UsersServiceTests {
         UUID randomUserId = UUID.randomUUID();
         doThrow(new IllegalArgumentException("User not found"))
                 .when(userRepository)
-                .deleteUserById(randomUserId);
+                .deleteObjectById(randomUserId);
 
         // Act & Assert
         assertThrows(RuntimeException.class,
                 () -> userService.deleteUserById(randomUserId));
         verify(userRepository, times(1))
-                .deleteUserById(randomUserId);
+                .deleteObjectById(randomUserId);
     }
 
     @Test
     void deleteUserById_ShouldHandleInvalidUUID() {
         doThrow(new ValidationException("User ID cannot be null"))
-                .when(userRepository).deleteUserById(null);
+                .when(userRepository).deleteObjectById(null);
 
         assertThrows(ValidationException.class,
                 () -> userService.deleteUserById(null));
         verify(userRepository, never())
-                .deleteUserById(any());
+                .deleteObjectById(any());
     }
 }

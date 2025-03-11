@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Service
 @SuppressWarnings("rawtypes")
-public class ProductService extends MainService<Product> {
+public class ProductService extends MainService<Product, ProductRepository> {
 
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
@@ -25,27 +25,22 @@ public class ProductService extends MainService<Product> {
     public ProductService(final ProductRepository productRepository,
                           final CartRepository cartRepository,
                           final OrderRepository orderRepository) {
+        super(productRepository);
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
         this.orderRepository = orderRepository;
     }
 
     public Product addProduct(final Product product) {
-        if (product.getId() == null) {
-            throw new ValidationException("Product id cannot be null");
-        }
-        return productRepository.addProduct(product);
+        return addObject(product);
     }
 
     public ArrayList<Product> getProducts() {
-        return productRepository.getProducts();
+        return getObjects();
     }
 
     public Product getProductById(final UUID productId) {
-        if (productId == null) {
-            throw new ValidationException("id cannot be null");
-        }
-        return productRepository.getProductById(productId);
+        return getObjectById(productId);
     }
 
     public Product updateProduct(final UUID productId, final String newName,
