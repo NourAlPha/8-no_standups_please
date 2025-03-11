@@ -12,7 +12,17 @@
 
 ## Overview
 
-This project is a robust and scalable backend server built using **Spring Boot** and adhering to **Clean Architecture** principles. It is designed to be easily extendable into a microservices architecture. The project leverages modern development tools and practices, including **Maven** for dependency management, **JUnit** for testing, **Checkstyle** and **jscpd** for code quality, **Docker** for containerization, and **CI/CD** pipelines for automated deployment.
+This project is a robust and scalable backend server built using **Spring Boot**  
+and adhering to **Clean Architecture** principles. It is designed to be easily  
+extendable into a microservices architecture.  
+
+The project leverages modern development tools and practices, including:  
+
+- **Maven** for dependency management  
+- **JUnit** for testing  
+- **Checkstyle** and **jscpd** for code quality  
+- **Docker** for containerization  
+- **CI/CD** pipelines for automated deployment
 
 ## Features
 
@@ -49,8 +59,8 @@ Before you begin, ensure you have the following installed:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/NourAlPha/8-no_standups_please.git
+cd 8-no_standups_please
 ```  
 
 ### Build the Project
@@ -72,7 +82,7 @@ mvn test
 ---
 
 ## Project Structure
-```
+```css
 src/
 ├── main/
 │   ├── java/
