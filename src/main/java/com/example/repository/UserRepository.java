@@ -41,10 +41,11 @@ public class UserRepository extends GenericRepository<User> {
     public void addOrderToUser(final UUID userId, final Order order) {
         User user = getUserById(userId);
         user.addOrder(order);
-        overrideData(getUsers());
+        saveAll(getUsers());
     }
 
     public void removeOrderFromUser(final UUID userId, final UUID orderId) {
+        System.out.println("userId");
         User user = getUserById(userId);
         List<Order> orders = user.getOrders();
         for (Order order : orders) {
