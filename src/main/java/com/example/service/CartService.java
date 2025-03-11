@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.exception.ValidationException;
 import com.example.model.Cart;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
@@ -11,31 +10,26 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
-public class CartService {
+public class CartService extends MainService<Cart, CartRepository> {
 
     private final CartRepository cartRepository;
 
     @Autowired
     public CartService(final CartRepository cartRepository) {
+        super(cartRepository);
         this.cartRepository = cartRepository;
     }
 
     public Cart addCart(final Cart cart) {
-        if (cart.getId() == null) {
-            throw new ValidationException("Cart id cannot be null");
-        }
-        return cartRepository.addCart(cart);
+        return addObject(cart);
     }
 
     public ArrayList<Cart> getCarts() {
-        return cartRepository.getCarts();
+        return getObjects();
     }
 
     public Cart getCartById(final UUID cartId) {
-        if (cartId == null) {
-            throw new ValidationException("id cannot be null");
-        }
-        return cartRepository.getCartById(cartId);
+        return getObjectById(cartId);
     }
 
     public Cart getCartByUserId(final UUID userId) {
