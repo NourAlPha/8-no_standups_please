@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.NotFoundException;
 import com.example.exception.ValidationException;
 import com.example.model.Order;
 import com.example.repository.OrderRepository;
@@ -26,21 +27,20 @@ public class OrderService extends MainService<Order, OrderRepository> {
     }
 
     public void addOrder(final Order order) {
+        checkObject(order);
+        checkId(order.getId());
+        if (order.getUserId() == null) {
+            throw new ValidationException("User ID is required");
+        }
+        if (order.getProducts() == null || order.getProducts().isEmpty()) {
+            throw new ValidationException("Products are required");
+        }
         try {
-            if (order == null) {
-                throw new IllegalArgumentException("Order cannot be null");
-            }
-            if (order.getUserId() == null) {
-                throw new IllegalArgumentException("User ID is required");
-            }
-            if (order.getProducts() == null || order.getProducts().isEmpty()) {
-                throw new IllegalArgumentException("Products are required");
-            }
             // Checking if the user exists.
             userRepository.getUserById(order.getUserId());
             orderRepository.addOrder(order);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
     }
 
@@ -53,9 +53,7 @@ public class OrderService extends MainService<Order, OrderRepository> {
     }
 
     public void deleteOrderById(final UUID orderId) {
-        if (orderId == null) {
-            throw new ValidationException("id cannot be null");
-        }
+        checkId(orderId);
         // Removing the order from the user (mimicking referencing).
         Order order = orderRepository.getOrderById(orderId);
         userRepository.removeOrderFromUser(order.getUserId(), orderId);

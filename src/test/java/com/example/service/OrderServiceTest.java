@@ -97,10 +97,10 @@ public class OrderServiceTest {
         Order order = new Order(
                 UUID.randomUUID(), HUNDRED, CART_1.getProducts());
         when(userRepository.getUserById(order.getUserId()))
-                .thenThrow(new IllegalArgumentException(
+                .thenThrow(new NotFoundException(
                         String.format("id %s not found", order.getId())));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> orderService.addOrder(order));
         verify(orderRepository, never()).addOrder(order);
         verify(userRepository, times(ONE)).getUserById(order.getUserId());
@@ -212,9 +212,9 @@ public class OrderServiceTest {
     }
 
     private void assertExceptionAndVerifyNoInvocations(final Order order) {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ValidationException.class,
                 () -> orderService.addOrder(order));
-        verify(orderRepository, never()).addOrder(order);
+        verify(orderRepository, never()).addOrder(any());
         verify(userRepository, never()).getUserById(any());
     }
 }
