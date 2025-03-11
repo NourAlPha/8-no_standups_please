@@ -87,10 +87,7 @@ public class OrderServiceTest {
     public void addOrder_NullUserId_ExceptionThrown() {
         Order order = new Order(null, HUNDRED, CART_1.getProducts());
 
-        assertThrows(IllegalArgumentException.class,
-                () -> orderService.addOrder(order));
-        verify(orderRepository, never()).addOrder(order);
-        verify(userRepository, never()).getUserById(any());
+        assertExceptionAndVerifyNoInvocations(order);
     }
 
     @Test
@@ -111,10 +108,7 @@ public class OrderServiceTest {
     public void addOrder_EmptyProducts_ExceptionThrown() {
         Order order = new Order(USER.getId(), HUNDRED, new ArrayList<>());
 
-        assertThrows(IllegalArgumentException.class,
-                () -> orderService.addOrder(order));
-        verify(orderRepository, never()).addOrder(order);
-        verify(userRepository, never()).getUserById(any());
+        assertExceptionAndVerifyNoInvocations(order);
     }
 
     @Test
@@ -134,11 +128,7 @@ public class OrderServiceTest {
 
     @Test
     public void getOrderById_InvalidOrderId_ExceptionThrown() {
-        Order randomOrder =
-                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
-        when(orderRepository.getOrderById(randomOrder.getId()))
-                .thenThrow(new IllegalArgumentException(
-                        String.format("id %s not found", randomOrder.getId())));
+        Order randomOrder = createNonExistentOrder();
 
         assertThrows(IllegalArgumentException.class,
                 () -> orderService.getOrderById(randomOrder.getId()));
@@ -197,11 +187,7 @@ public class OrderServiceTest {
 
     @Test
     public void deleteOrderById_NonExistentId_ExceptionThrown() {
-        Order randomOrder =
-                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
-        when(orderRepository.getOrderById(randomOrder.getId()))
-                .thenThrow(new IllegalArgumentException(
-                        String.format("id %s not found", randomOrder.getId())));
+        Order randomOrder = createNonExistentOrder();
 
         assertThrows(IllegalArgumentException.class,
                 () -> orderService.deleteOrderById(randomOrder.getId()));
@@ -212,5 +198,21 @@ public class OrderServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> orderService.deleteOrderById(null));
         verify(orderRepository, never()).deleteOrderById(any());
+    }
+
+    private Order createNonExistentOrder() {
+        Order randomOrder =
+                new Order(UUID.randomUUID(), HUNDRED, CART_1.getProducts());
+        when(orderRepository.getOrderById(randomOrder.getId()))
+                .thenThrow(new IllegalArgumentException(
+                        String.format("id %s not found", randomOrder.getId())));
+        return randomOrder;
+    }
+
+    private void assertExceptionAndVerifyNoInvocations(final Order order) {
+        assertThrows(IllegalArgumentException.class,
+                () -> orderService.addOrder(order));
+        verify(orderRepository, never()).addOrder(order);
+        verify(userRepository, never()).getUserById(any());
     }
 }
