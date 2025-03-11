@@ -42,12 +42,10 @@ public class CartService extends MainService<Cart, CartRepository> {
     }
 
     public void addProductToCart(final UUID cartId, final Product product) {
-        if (cartId == null) {
-            throw new ValidationException("cartId cannot be null");
-        }
         if (product == null) {
             throw new ValidationException("product cannot be null");
         }
+        checkId(cartId);
         cartRepository.addProductToCart(cartId, product);
     }
 
