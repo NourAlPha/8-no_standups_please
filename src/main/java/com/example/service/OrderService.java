@@ -4,9 +4,7 @@ import com.example.model.Order;
 import com.example.repository.OrderRepository;
 import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -28,20 +26,20 @@ public class OrderService extends MainService<Order> {
     public void addOrder(final Order order) {
 
         try {
+            if (order == null) {
+                throw new IllegalArgumentException("Order cannot be null");
+            }
             if (order.getUserId() == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "User ID is required");
+                throw new IllegalArgumentException("User ID is required");
             }
             if (order.getProducts() == null || order.getProducts().isEmpty()) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Products are required");
+                throw new IllegalArgumentException("Products are required");
             }
             // Checking if the user exists.
             userRepository.getUserById(order.getUserId());
             orderRepository.addOrder(order);
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
 
     }
@@ -51,13 +49,21 @@ public class OrderService extends MainService<Order> {
     }
 
     public Order getOrderById(final UUID orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
         return orderRepository.getOrderById(orderId);
     }
 
     public void deleteOrderById(final UUID orderId)
             throws IllegalArgumentException {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID cannot be null");
+        }
+
         // Removing the order from the user (mimicking referencing).
         Order order = orderRepository.getOrderById(orderId);
+
         userRepository.removeOrderFromUser(order.getUserId(), orderId);
 
         orderRepository.deleteOrderById(orderId);

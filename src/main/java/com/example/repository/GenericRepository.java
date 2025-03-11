@@ -1,8 +1,6 @@
 package com.example.repository;
 
 import com.example.model.Identifiable;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -34,8 +32,8 @@ public abstract class GenericRepository<T extends Identifiable>
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("id %s not found", id));
+        throw new IllegalArgumentException(
+                String.format("id %s not found", id));
     }
 
     protected void deleteObjectById(final UUID id) {
