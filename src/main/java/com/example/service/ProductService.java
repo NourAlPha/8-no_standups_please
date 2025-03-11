@@ -1,7 +1,6 @@
 package com.example.service;
 
 import com.example.exception.InvalidActionException;
-import com.example.exception.ValidationException;
 import com.example.model.Product;
 import com.example.repository.CartRepository;
 import com.example.repository.OrderRepository;
@@ -73,18 +72,13 @@ public class ProductService extends MainService<Product, ProductRepository> {
     }
 
     public void deleteProductById(final UUID productId) {
-        if (productId == null) {
-            throw new ValidationException("id cannot be null");
-        }
-
-        if (productRepository.getProductById(productId) == null) {
-            throw new ValidationException("Product not found");
-        }
-
+        checkId(productId);
         if (orderRepository.isProductInOrder(productId)) {
             throw new InvalidActionException("Product is in active orders");
         }
 
+        // Delete the product from all carts that contain
+        // this product
         cartRepository.removeProductFromAllCarts(productId);
 
         productRepository.deleteProductById(productId);

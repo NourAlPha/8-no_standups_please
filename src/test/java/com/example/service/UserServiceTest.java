@@ -224,12 +224,12 @@ class UserServiceTest {
     void deleteUserById_ShouldThrowExceptionForNonExistentUser() {
         // Arrange
         UUID randomUserId = UUID.randomUUID();
-        doThrow(new IllegalArgumentException("User not found"))
+        doThrow(new NotFoundException("User not found"))
                 .when(userRepository)
                 .deleteObjectById(randomUserId);
 
         // Act & Assert
-        assertThrows(RuntimeException.class,
+        assertThrows(NotFoundException.class,
                 () -> userService.deleteUserById(randomUserId));
         verify(userRepository, times(1))
                 .deleteObjectById(randomUserId);
