@@ -194,4 +194,37 @@ class CartServiceTest {
         assertThrows(ValidationException.class, () -> cartService.addProductToCart(cartId, product));
         verify(cartRepository, never()).addProductToCart(any(), any());
     }
+
+    @Test
+    void givenValidCartId_whenDeleteCartById_thenCartIsDeleted() {
+        // Given
+        UUID cartId = UUID.randomUUID();
+        doNothing().when(cartRepository).deleteObjectById(cartId);
+
+        // When
+        cartService.deleteCartById(cartId);
+
+        // Then
+        verify(cartRepository, times(1)).deleteObjectById(cartId);
+    }
+
+    @Test
+    void givenInvalidCartId_whenDeleteCartById_thenThrowException() {
+        // Given
+        UUID invalidCartId = UUID.randomUUID();
+        doThrow(new NotFoundException("Cart not found")).when(cartRepository).deleteObjectById(invalidCartId);
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> cartService.deleteCartById(invalidCartId));
+    }
+
+    @Test
+    void givenNullCartId_whenDeleteCartById_thenThrowException() {
+        // Given
+        UUID cartId = null;
+
+        // When & Then
+        assertThrows(ValidationException.class, () -> cartService.deleteCartById(cartId));
+        verify(cartRepository, never()).deleteCartById(any());
+    }
 }
