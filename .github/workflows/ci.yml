@@ -10,22 +10,37 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Old Artifacts
+      - name: Delete All Artifacts
         uses: actions/github-script@v6
         with:
           script: |
-            const res = await github.rest.actions.listArtifactsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })
+            let page = 1;
+            let deletedCount = 0;
             
-            for (const artifact of res.data.artifacts) {
-              await github.rest.actions.deleteArtifact({
+            while (true) {
+              const res = await github.rest.actions.listArtifactsForRepo({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                artifact_id: artifact.id,
-              })
+                per_page: 100,
+                page: page
+              });
+            
+              if (res.data.artifacts.length === 0) break;
+            
+              for (const artifact of res.data.artifacts) {
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+                console.log(`Deleted artifact: ${artifact.name} (${artifact.id})`);
+                deletedCount++;
+              }
+            
+              page++;
             }
+            
+            console.log(`✅ Deleted ${deletedCount} artifacts in total.`);
   compile:
     name: Compile Project
     runs-on: ubuntu-latest
